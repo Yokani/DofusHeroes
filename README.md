@@ -7,6 +7,9 @@ This tool uses AutoHotkey to make handling multiple accounts (multiboxing) in th
 
 I will not take responsibility for anyone who uses this tool and gets banned for it. It's a greyzone - use at your own risk!
 
+# Release
+Current version: v1.0 https://github.com/Yokani/DofusHeroes/releases/tag/v1.0
+
 # HowTo:
 
 General Information:

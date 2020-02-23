@@ -24,13 +24,20 @@ The settings are saved in a settings.ini file at the current directory.
 If the file doesn't exist the program initializes with some preset values for the hotkey configuration.
 
 First Tab (Characters):
+
+<a href="https://ibb.co/gz0PksT"><img src="https://i.ibb.co/V2FQfXS/guide1.png" alt="guide1" border="0"></a>
+
 1) On the first tab enter the names of your characters according to the initiave order of your team
 2) Check isActive? for every character that is logged in
 3) Check autoSwitchOn? for every character you wish to switch client windows after his/her turn.
 
 opt) Use the arrows on the left to change the initiative order live, for example if one of your characters had low hp
 
+In the example above we have Osaschmodas going first. He uses pets, hence we don't want to switch to the next character automatically after he ends his turn (autoSwitch is off). Jonny-Doe is our Iop. He doesn't use pets so we use the auto-switch feature to switch to our osa after his turn.
+
 Second Tab (Hotkey customization):
+
+<a href="https://ibb.co/JspjVSK"><img src="https://i.ibb.co/cr8h0s1/guide2.png" alt="guide2" border="0"></a>
 
 On this tab you can set up your custom hotkeys. There mostly are a Drop-Down-List(DDL) and a Hotkey input field for each feature. The DDL is for mouse and other fixed keys that can't be used with the hotkey input field. Check the radio button on the left which of the two you want to use. Customize the hotkey on the right.
 For the hotkey input field: Click into the field and press the hotkey you want to use.
@@ -45,6 +52,8 @@ For the hotkey input field: Click into the field and press the hotkey you want t
 8. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
 
 Third Tab (Infos and advanced stuff)
+
+<a href="https://ibb.co/L8shvBp"><img src="https://i.ibb.co/0czVQ1J/guide3.png" alt="guide3" border="0"></a>
 
 Currently only has hotkey information about the terminology used in AHK and the tool, e.g. '!' corresponds to the Alt Key.
 

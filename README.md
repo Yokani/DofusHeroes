@@ -7,6 +7,11 @@ This tool uses AutoHotkey to make handling multiple accounts (multiboxing) in th
 
 I will not take responsibility for anyone who uses this tool and gets banned for it. It's a greyzone - use at your own risk!
 
+Mind that some Anti-Virus software might think that the .exe (binary) is harmful. A scan of the binary can be found here: 
+https://www.virustotal.com/gui/file/8cd6fd0ebaad373497c60c3fa0ed32e4d4754192d29bc389af4e01ac8566d7b9/detection
+Zillya & MaxSecure are false-positives. You can google that... it's a common problem they have with AHK binaries.
+
+
 # Release
 Current version: v1.0 https://github.com/Yokani/DofusHeroes/releases/tag/v1.0
 

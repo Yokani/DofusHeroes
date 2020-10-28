@@ -24,6 +24,7 @@ The settings are saved in a settings.ini file at the current directory.
 If the file doesn't exist the program initializes with some preset values for the hotkey configuration.
 
 First Tab (Characters):
+
 <a href="https://ibb.co/hFqY3W1"><img src="https://i.ibb.co/RT5jR04/firsttab.png" alt="firsttab" border="0"></a>
 
 1) On the first tab enter the names of your characters according to the initiave order of your team

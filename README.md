@@ -18,6 +18,10 @@ Current version: v1.0 https://github.com/Yokani/DofusHeroes/releases/tag/v1.0
 
 General Information:
 
+<a href="https://ibb.co/YD6X2L6"><img src="https://i.ibb.co/bHxF1Kx/firsttab.png" alt="firsttab" border="0"></a>
+<a href="https://ibb.co/GvGg3ks"><img src="https://i.ibb.co/kgzY603/secondtab.png" alt="secondtab" border="0"></a>
+<a href="https://ibb.co/qCy2Wp1"><img src="https://i.ibb.co/1Mv4dT2/thirdtab.png" alt="thirdtab" border="0"></a>
+
 If minimized the program lands in tray. Click on the tray button to open it again. 
 The settings are saved on correct termination (e.g. by pressing the "X" in the window). If you kill it, it won't save!
 The settings are saved in a settings.ini file at the current directory. 
@@ -25,7 +29,7 @@ If the file doesn't exist the program initializes with some preset values for th
 
 First Tab (Characters):
 
-<a href="https://ibb.co/gz0PksT"><img src="https://ibb.co/YD6X2L6" alt="guide1" border="0"></a>
+<a href="https://ibb.co/gz0PksT"><img src="https://i.ibb.co/bHxF1Kx/firsttab.png" alt="guide1" border="0"></a>
 
 1) On the first tab enter the names of your characters according to the initiave order of your team
 2) Check isActive? for every character that is logged in
@@ -37,7 +41,7 @@ In the example above we have Osaschmodas going first. He uses pets, hence we don
 
 Second Tab (Hotkey customization):
 
-<a href="https://ibb.co/JspjVSK"><img src="https://ibb.co/GvGg3ks" alt="guide2" border="0"></a>
+<a href="https://ibb.co/JspjVSK"><img src="https://i.ibb.co/kgzY603/secondtab.png" alt="guide2" border="0"></a>
 
 On this tab you can set up your custom hotkeys. There mostly are a Drop-Down-List(DDL) and a Hotkey input field for each feature. The DDL is for mouse and other fixed keys that can't be used with the hotkey input field. Check the radio button on the left which of the two you want to use. Customize the hotkey on the right.
 For the hotkey input field: Click into the field and press the hotkey you want to use.
@@ -53,7 +57,7 @@ For the hotkey input field: Click into the field and press the hotkey you want t
 
 Third Tab (Infos and advanced stuff)
 
-<a href="https://ibb.co/L8shvBp"><img src="https://ibb.co/qCy2Wp1" alt="guide3" border="0"></a>
+<a href="https://ibb.co/L8shvBp"><img src="https://i.ibb.co/1Mv4dT2/thirdtab.png" alt="guide3" border="0"></a>
 
 Currently only has hotkey information about the terminology used in AHK and the tool, e.g. '!' corresponds to the Alt Key.
 

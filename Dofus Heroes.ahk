@@ -941,37 +941,19 @@ mainWindowGuiClose:
 ; =============================
 ; =============================
 
+
+; #Include <FindText>
+
+ 
+
 CheckArchMonster(){
-	x = 0
-	y = 0
-	a1 = amob1.png
-	a2 = amob2.png
-	a3 = amob3.png
-	a4 = amob4.png
-	transparency := 75
-	Loop 2{
-		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a1%
-		If !(!x or !y){
-			Return True
-		}
-
-		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a2%
-		If !(!x or !y){
-			Return True
-		}
-
-		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a3%
-		If !(!x or !y){
-			Return True
-		}
-
-		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a4%
-		If !(!x or !y){
-			Return True
-		}
-		transparency += 25
+	t1:=A_TickCount, X:=Y:=""
+	Text:="|<archmob1>*75$21.0D0ATzXnzyTzzzzzzzzzzyD7vksyy73rksyS77ltxsDzzUzzs3sy0S7kU"
+	if(ok:=FindText(1486-150000, 492-150000, 1486+150000, 492+150000, 0.2, 0.2, Text)){
+		Return True
+	}else{
+		Return False
 	}
-	Return False
 }
 
 getCoords(){ ; Gets the current map coordinates by scanning the upper left screen

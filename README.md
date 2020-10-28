@@ -55,8 +55,10 @@ Third Tab (Infos and advanced stuff)
 
 <a href="https://ibb.co/1Mv4dT2"><img src="https://i.ibb.co/1Mv4dT2/thirdtab.png" alt="thirdtab" border="0"></a>
 
-Currently only has hotkey information about the terminology used in AHK and the tool, e.g. '!' corresponds to the Alt Key.
-
 FightJoiner:
 
 With this feature you can enter a fight and make your other characters join without needing to switch to their windows. Follow the instructions in the GUI to set it up correctly.
+
+ArchmonsterTracker:
+
+This feature automatically tracks archmonsters you come across and logs their position in a seperate window. This way you can travel around (with pre-sentient-potion) and watch a movie or something, then check where those pesky archmonsters hide and capture them all!

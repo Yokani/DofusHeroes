@@ -3,13 +3,27 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
+#Include, findtext.ahk
+#Include, DH-GUI.ahk
+
 #SingleInstance, force
 OnExit("ExitFunc")
 
+; Variables
+; ==============================================================================================================================================================================
+accounts := 0
+ini1 := "", ini2 := "", ini3 := "", ini4 := "", ini5 := "", ini6 := "", ini7 := "", ini8 := ""
+iniAutoSwitch1 := 0, iniAutoSwitch2 := 0, iniAutoSwitch3 := 0, iniAutoSwitch4 := 0, iniAutoSwitch5 := 0, iniAutoSwitch6 := 0, iniAutoSwitch7 := 0, iniAutoSwitch8 := 0
+tmp := 0
+joinX = 0
+joinY = 0
+amobTracking := False
+guiActive := False
+currentAMobs := ""
+aMobAmount := 0
+
 ; Initialization
 ; ==============================================================================================================================================================================
-; ==============================================================================================================================================================================
-; ===============================================================================================================================================================================================
 
 IfNotExist, %A_WorkingDir%\settings.ini
 {
@@ -55,147 +69,167 @@ IfNotExist, %A_WorkingDir%\settings.ini
 
 Menu, Tray, NoStandard
 Menu, Tray, Add, Settings, loadGUI
-Menu, Tray, Add, Close, GuiClose
+Menu, Tray, Add, Close, mainWindowGuiClose
 Menu, Tray, Default, Settings
 Menu, Tray, Click, 1
 Menu, Tray, Tip, Dofus Heroes
 
-accounts := 0
-ini1 := "", ini2 := "", ini3 := "", ini4 := "", ini5 := "", ini6 := "", ini7 := "", ini8 := ""
-iniAutoSwitch1 := 0, iniAutoSwitch2 := 0, iniAutoSwitch3 := 0, iniAutoSwitch4 := 0, iniAutoSwitch5 := 0, iniAutoSwitch6 := 0, iniAutoSwitch7 := 0, iniAutoSwitch8 := 0
-tmp := 0
-joinX = 0
-joinY = 0
-
 OnMessage(0x112, "WM_SYSCOMMAND")
-Gosub, loadGUI
+guiActive := 0
+gosub, loadGUI
 goto LoadSettings
 return
 
 WM_SYSCOMMAND(wParam)
 {
-	If wParam = 61472
+	; window minimize button
+	If wParam = 0xF020
 	{
 		gosub SaveSettings
-		Gui, Destroy
+		gosub guiToggle
+		Gui, mainWindowG:Destroy
 	}
+	; window close button
+	If wParam = 0xF060
+	{
+		ExitFunc()
+	}
+	Return
 }
 
 ; Labels
 ; ==============================================================================================================================================================================
 ; ==============================================================================================================================================================================
+
+guiToggle:
+	if (guiActive = 1){
+		guiActive := 0
+	}else{
+		guiActive := 1
+	}
+
 DButton:
-	GuiControl, Focus, DButt
+	GuiControl,mainWindowG:Focus, DButt
 	return
 
 doNothing:
 	return
 
 loadGUI:
-	Gui, Add, Tab3, x5 y5 w700 Buttons cBlack, Characters|Hotkeys|Guide/AdvancedSection
-	Gui, Tab, 1
+	if (guiActive = 1){
+		return
+	}
+	Gui, mainWindowG:Font, cBlack s12 norm, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Tab3, x5 y5 w700 Buttons cBlack, Characters|Hotkeys|Advanced
+	Gui, mainWindowG:Tab, 1
 	
 	; Character Initiative Section
-	Gui, Font, cBlack s14 underline, Lucida Sans Unicode
-	Gui, Add, Text, x20 y40, Characters by Initiative Order
-	Gui, Font, cBlack s12 norm, Lucida Sans Unicode
+	Gui, mainWindowG:Font, cBlack s14 norm, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Text, x100 y50, Characters by Initiative Order
+	Gui, mainWindowG:Font, cBlack s12 norm, Copperplate Gothic Bold
 
 	Loop, 8
 	{
-		Gui, Add, Button, x10 y+20 gUp%A_Index%, 🡅
-		Gui, Add, Button, x+10 yp gDown%A_Index%, 🡇
-		Gui, Add, Text, x+10 yp, %A_Index%.
-		Gui, Add, Edit, vEIni%A_Index% gUpdateVars -WantReturn limit20 x+10 yp w200
-		Gui, Add, CheckBox, vAIni%A_Index% gUpdateVars x+10 yp, isActive?
-		Gui, Add, CheckBox, vAutoSwitchIni%A_Index% gUpdateVars x+20 yp, autoSwitchOn?
+		if A_Index = 1
+			Gui, mainWindowG:Add, Button, x10 y+20 gUp%A_Index%, 🡅
+		else
+			Gui, mainWindowG:Add, Button, x10 y+45 gUp%A_Index%, 🡅
+		Gui, mainWindowG:Add, Button, x+10 yp gDown%A_Index%, 🡇
+		Gui, mainWindowG:Add, Text, x+10 yp, %A_Index%.
+		Gui, mainWindowG:Font, cBlack s12 norm, Cambria
+		Gui, mainWindowG:Add, Edit, vEIni%A_Index% gUpdateVars -WantReturn -VScroll limit20 x+10 yp w300 h40
+		Gui, mainWindowG:Font, cBlack s12 norm, Copperplate Gothic Bold
+		Gui, mainWindowG:Add, CheckBox, vAIni%A_Index% gUpdateVars x+10 yp, active?
+		Gui, mainWindowG:Add, CheckBox, vAutoSwitchIni%A_Index% gUpdateVars x+20 yp, autoSwitch?
 	}
 
-	Gui, Tab, 2
+	Gui, mainWindowG:Tab, 2
 	; Hotkey Section
-	Gui, Font, cBlack s10 norm, Lucida Sans Unicode
-	Gui, Add, Radio, vDofusEndOfTurnButtonDDLCheck gUpdateVars x10 y40, use fixed
-	Gui, Add, Radio, vDofusEndOfTurnButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vDofusEndOfTurnButtonDDL gUpdateVars x+10 y40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vDofusEndOfTurnButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y40 w450 ReadOnly -E0x200 -VScroll, Your End-Of-Turn Button in Dofus.`nSet it up in the game under Options>Shortcuts>Fight: "End the turn". Then enter the corresponding key here.
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Radio, vDofusEndOfTurnButtonDDLCheck gUpdateVars x10 y40, use fixed
+	Gui, mainWindowG:Add, Radio, vDofusEndOfTurnButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vDofusEndOfTurnButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vDofusEndOfTurnButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, Your End-Of-Turn Button in Dofus.`nSet it up in the game under Options>Shortcuts>Fight: "End the turn". Then enter the corresponding key here.
 	
-	Gui, Add, Radio, vHeroesEndOfTurnButtonDDLCheck gUpdateVars x10 y110, use fixed
-	Gui, Add, Radio, vHeroesEndOfTurnButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vHeroesEndOfTurnButtonDDL gUpdateVars x+10 y110 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vHeroesEndOfTurnButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y100 w450 ReadOnly -E0x200 -VScroll, HeroesEndOfTurnFunctionality:`nThis Hotkey sends your Dofus End-Of-Turn Button (specified above) to the current window. If "autoSwitchOn?" is enabled for the current character the next characters window depending on the initiative order is brought to front automatically.
+	Gui, mainWindowG:Add, Radio, vHeroesEndOfTurnButtonDDLCheck gUpdateVars x10 y+20, use fixed
+	Gui, mainWindowG:Add, Radio, vHeroesEndOfTurnButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vHeroesEndOfTurnButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vHeroesEndOfTurnButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, HeroesEndOfTurnFunctionality:`nThis Hotkey sends your Dofus End-Of-Turn Button (specified above) to the current window. If "autoSwitchOn?" is enabled for the current character the next characters window depending on the initiative order is brought to front automatically.
 	
-	Gui, Add, Radio, vStartBattleButtonDDLCheck gUpdateVars x10 y195, use fixed
-	Gui, Add, Radio, vStartBattleButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vStartBattleButtonDDL gUpdateVars x+10 y195 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vStartBattleButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y195 w450 ReadOnly -E0x200 -VScroll, This Hotkey starts the battle for all "isActive?" characters by sending the Dofus-End-Of-Turn key to their windows.
+	Gui, mainWindowG:Add, Radio, vStartBattleButtonDDLCheck gUpdateVars x10 y+20, use fixed
+	Gui, mainWindowG:Add, Radio, vStartBattleButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vStartBattleButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vStartBattleButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, This Hotkey starts the battle for all "isActive?" characters by sending the Dofus-End-Of-Turn key to their windows.
 
-	Gui, Add, Radio, vLeftClickButtonDDLCheck gUpdateVars x10 y280, use fixed
-	Gui, Add, Radio, vLeftClickButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vLeftClickButtonDDL gUpdateVars x+10 y280 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vLeftClickButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y280 w450 ReadOnly -E0x200 -VScroll, This Hotkey performs a LEFT-CLICK in all "isActive?" character windows at the current mouse position.
+	Gui, mainWindowG:Add, Radio, vLeftClickButtonDDLCheck gUpdateVars x10 y+20, use fixed
+	Gui, mainWindowG:Add, Radio, vLeftClickButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vLeftClickButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vLeftClickButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, This Hotkey performs a LEFT-CLICK in all "isActive?" character windows at the current mouse position.
 
-	Gui, Add, Radio, vRightClickButtonDDLCheck gUpdateVars x10 y350, use fixed
-	Gui, Add, Radio, vRightClickButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vRightClickButtonDDL gUpdateVars x+10 y350 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vRightClickButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y350 w450 ReadOnly -E0x200 -VScroll, This Hotkey performs a RIGHT-CLICK in all "isActive?" character windows at the current mouse position.
+	Gui, mainWindowG:Add, Radio, vRightClickButtonDDLCheck gUpdateVars x10 y+30, use fixed
+	Gui, mainWindowG:Add, Radio, vRightClickButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vRightClickButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vRightClickButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, This Hotkey performs a RIGHT-CLICK in all "isActive?" character windows at the current mouse position.
 	
-	Gui, Add, Radio, vSwitchNextButtonDDLCheck gUpdateVars x10 y430, use fixed
-	Gui, Add, Radio, vSwitchNextButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vSwitchNextButtonDDL gUpdateVars x+10 y430 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vSwitchNextButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y430 w450 ReadOnly -E0x200 -VScroll, This Hotkey switches to the next "isActive?" characters window in the initiative order.
+	Gui, mainWindowG:Add, Radio, vSwitchNextButtonDDLCheck gUpdateVars x10 y+30, use fixed
+	Gui, mainWindowG:Add, Radio, vSwitchNextButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vSwitchNextButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vSwitchNextButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, This Hotkey switches to the next "isActive?" characters window in the initiative order.
 
-	Gui, Add, Radio, vSwitchLastButtonDDLCheck gUpdateVars x10 y500, use fixed
-	Gui, Add, Radio, vSwitchLastButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vSwitchLastButtonDDL gUpdateVars x+10 y500 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, vSwitchLastButtonHK gUpdateVars xp y+10 w90
-	Gui, Add, Edit, x+10 y500 w450 ReadOnly -E0x200 -VScroll, This Hotkey switches to the former "isActive?" characters window in the initiative order.
+	Gui, mainWindowG:Add, Radio, vSwitchLastButtonDDLCheck gUpdateVars x10 y+30, use fixed
+	Gui, mainWindowG:Add, Radio, vSwitchLastButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vSwitchLastButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|MButton|^MButton|!MButton|+MButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, vSwitchLastButtonHK gUpdateVars xp y+10 w90
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w450 ReadOnly -E0x200 -VScroll, This Hotkey switches to the former "isActive?" characters window in the initiative order.
 
-	Gui, Add, DropDownList, vControlKey gUpdateVars x10 y+30 w90, Shift|Alt|Ctrl
-	Gui, Add, Edit, x+10 yp w450 ReadOnly -E0x200 -VScroll, This Key + a number brings the corresponding characters window to the front.
+	Gui, mainWindowG:Add, DropDownList, vControlKey gUpdateVars x10 y+30 w90, Shift|Alt|Ctrl
+	Gui, mainWindowG:Add, Edit, x+10 yp w450 ReadOnly -E0x200 -VScroll, This Key + a number brings the corresponding characters window to the front.
 
-	Gui, Tab
-	Gui, Tab, 3
+	Gui, mainWindowG:Add, Button, vHelpButton gRunHelp x+10 yp w90, Help Me!
+
+	Gui, mainWindowG:Tab
+	Gui, mainWindowG:Tab, 3
 	; Extras Section
-	Gui, Font, cBlack s14 underline, Lucida Sans Unicode
-	Gui, Add, Text, x20 y40, Hotkey Explanation:
-	Gui, Font, cBlack s10 norm, Lucida Sans Unicode
-
 	fjexplanation1 = An automated detection of fight entrace would be against the TOS, hence we use a little workaround: You tell DofusHeroes the position of the message popup that comes up on your other characters when you join a fight and the tool sends a click command to that position on a hotkey specified by you. That way you do not have to switch to the other characters to join your fight on your current character!`n`n
 	fjexplanation2 = Use the hotkey below (once!) in order to set the mouse position of the join message popup on one of your characters when someone else of the group enters a fight. Make sure that the Dofus window is focused, because the coordinates are different if not. After setting the right position I suggest clearing the hotkey by clicking the input field and pressing RETURN, so you don't accidently press it again and reset the position!
-	hkexplanation = ^ : Ctrl/Strg,  ! : Alt,  + : Shift`nXButton1/2 : special mouse buttons, useally on the left side`nLButton/RButton/MButton : Left, right and middle mouse buttons`nFor example !LButton reads Alt + Left Mouse Button`n
-	Gui, Add, Edit, x20 y80 w550 ReadOnly -E0x200 -VScroll, %hkexplanation%
-	Gui, Add, Button, x0 w0 h0 default vDButt gDButton
+	Gui, mainWindowG:Add, Button, x0 w0 h0 default vDButt gDButton
 
-	Gui, Font, cBlack s14 underline, Lucida Sans Unicode
-	Gui, Add, Text, x20 y160, FightJoiner:
-	Gui, Font, cBlack s10 norm, Lucida Sans Unicode
+	Gui, mainWindowG:Font, cBlack s14 underline, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Text, x20 y40, FightJoiner:
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
 
-	Gui, Add, Edit, x20 y+20 w450 ReadOnly -E0x200 -VScroll, %fjexplanation1%%fjexplanation2%
+	Gui, mainWindowG:Add, Edit, x20 y+20 w450 ReadOnly -E0x200 -VScroll, %fjexplanation1%%fjexplanation2%
 
-	Gui, Add, Text, x20 y+10, Set Coordinates on
-	Gui, Add, Hotkey, x+10 yp w100 vSetButton gUpdateVars
+	Gui, mainWindowG:Add, Text, x20 y+10, Set Coordinates on
+	Gui, mainWindowG:Add, Hotkey, x+10 yp w100 vSetButton gUpdateVars
 
-	Gui, Font, cBlack s12 bold, Lucida Sans Unicode
-	Gui, Add, Edit, vCoords x+10 yp w450 ReadOnly -E0x200 -VScroll, Currently: %joinX%, %joinY%
-	Gui, Font, cBlack s10 norm, Lucida Sans Unicode
+	Gui, mainWindowG:Font, cBlack s12 bold, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Edit, vCoords x+10 yp w450 ReadOnly -E0x200 -VScroll, Currently: %joinX%, %joinY%
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
 	
-	Gui, Add, Radio, vJoinButtonDDLCheck gUpdateVars x10 y480, use fixed
-	Gui, Add, Radio, vJoinButtonHKCheck gUpdateVars x10 y+20, use custom
-	Gui, Add, DropDownList, vJoinButtonDDL gUpdateVars x+10 y480 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
-	Gui, Add, Hotkey, xp y+10 w90 vJoinButtonHK gUpdateVars
-	Gui, Add, Edit, x+10 y480 w350 ReadOnly -E0x200 -VScroll, On this button all characters, whose window is not focused click at the above set mouse position, in order to join the fight of the current character.
+	Gui, mainWindowG:Add, Radio, vJoinButtonDDLCheck gUpdateVars x10 y+20, use fixed
+	Gui, mainWindowG:Add, Radio, vJoinButtonHKCheck gUpdateVars x10 y+20, use custom
+	Gui, mainWindowG:Add, DropDownList, vJoinButtonDDL gUpdateVars x+10 yp-40 w90, XButton1|XButton2|Space|^LButton|!LButton|+LButton|^RButton|!RButton|+RButton|^XButton1|!XButton1|+XButton1|^XButton2|!XButton2|+XButton2
+	Gui, mainWindowG:Add, Hotkey, xp y+10 w90 vJoinButtonHK gUpdateVars
+	Gui, mainWindowG:Add, Edit, x+10 yp-30 w350 ReadOnly -E0x200 -VScroll, On this button all characters, whose window is not focused click at the above set mouse position, in order to join the fight of the current character.
 
-	Gui, Color, 748218, b4ca24, cfc63a
-	Gui +LastFound
-	Winset, Transparent, 240
+	; archmonster section
+	Gui, mainWindowG:Font, cBlack s14 underline, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Text, x10 y+10, ArchMonster Tracker:
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
 
-	Gui, Show, Center AutoSize, Dofus Heroes
+	Gui, mainWindowG:Add, Button, x10 y+10 gamobTracking, Start / Stop archmonster tracking
+	Gui, mainWindowG:Add, Text, x+10 yp+5 vTracker, Currently not tracking
 
+	Gui, mainWindowG:Color, a6a6a6, ffffff, 0
+	Gui, mainWindowG:Show, Center AutoSize, Dofus Heroes
+	guiActive := 1
 	goto LoadSettings
 
 UpdateVars:
@@ -248,7 +282,7 @@ UpdateVars:
 		Hotkey, %key%7, showIni7, off UseErrorLevel
 		Hotkey, %key%8, showIni8, off UseErrorLevel
 	}
-	Gui, Submit, NoHide
+	Gui, mainWindowG:Submit, NoHide
 
 	if HeroesEndOfTurnButtonDDL and HeroesEndOfTurnButtonDDLCheck
 		Hotkey % HeroesEndOfTurnButtonDDL, HeroesEndOfTurn, on
@@ -313,6 +347,52 @@ UpdateVars:
 	accounts--
 	return
 
+amobtracking:
+	SetTimer, archProcess, % (amobTracking := !amobTracking) ? 1000 : "Off"
+	if %amobTracking%{
+		GuiControl,mainWindowG:,Tracker,tracking...!
+		Gui, amobtrack:+AlwaysOnTop -SysMenu
+		Gui, amobtrack:Font, cBlack s11 norm, Lucida Sans Unicode
+		Gui, amobtrack:Add, Edit, x20 y20 w180 vArchMobs ReadOnly -VScroll -E0x200
+		GuiWidth := 200
+		Guixpos := A_ScreenWidth - GuiWidth
+		Gui, amobtrack:Color, a6a6a6, ffffff, 0
+		Gui, amobtrack:Show, y0 x%Guixpos% h200 w200, archmonsters
+	}else{
+		GuiControl,mainWindowG:,Tracker,currently not tracking
+		currentAMobs := ""
+		GuiControl,amobtrack:,ArchMobs,%currentAMobs%
+		Gui, amobtrack:Destroy
+	}
+	Return
+
+archProcess:
+	checke := CheckArchMonster()
+	if %checke%{
+		; Get & Write Pos to GUI
+		result := getCoords()
+		coords = [%result%]
+		IfInString, currentAMobs, %coords%
+			Return
+		if %currentAMobs%{
+			aMobAmount += 1
+			if (Mod(aMobAmount, 2) = 0){
+				currentAMobs=%currentAMobs% , `n%coords%
+			}else{
+				currentAMobs=%currentAMobs% , %coords%
+			}
+		}else{
+			currentAMobs=%coords%
+		}
+		GuiControl,amobtrack:,ArchMobs,%currentAMobs%
+	}
+	Return
+
+RunHelp:
+	hkexplanation = Hotkey Legend:`n^ : Ctrl/Strg`n! : Alt`n+ : Shift`nXButton1/2 : special mouse buttons, useally on the left side`nLButton/RButton/MButton : Left, right and middle mouse buttons`nFor example !LButton = Alt + Left Mouse Button`n`nFor a detailed description of features visit`nhttps://github.com/Yokani/DofusHeroes
+	MsgBox % hkexplanation
+	Return
+
 Up1:
 	tmp := 1
 	Goto Up
@@ -338,18 +418,18 @@ Up8:
 	tmp := 8
 	Goto Up
 Up:
-	Gui, Submit, NoHide
+	Gui, mainWindowG:Submit, NoHide
 	if tmp = 1
 	{	
 		tmp1 = %EIni8%
 		tmp2 = %AIni8%
 		tmp3 = %AutoSwitchIni8%
-		GuiControl,,EIni8, %EIni1%
-		GuiControl,,EIni1, %tmp1%
-		GuiControl,,AIni8, %AIni1%
-		GuiControl,,AIni1, %tmp2%
-		GuiControl,,AutoSwitchIni8, %AutoSwitchIni1%
-		GuiControl,,AutoSwitchIni1, %tmp3%
+		GuiControl,mainWindowG:,EIni8, %EIni1%
+		GuiControl,mainWindowG:,EIni1, %tmp1%
+		GuiControl,mainWindowG:,AIni8, %AIni1%
+		GuiControl,mainWindowG:,AIni1, %tmp2%
+		GuiControl,mainWindowG:,AutoSwitchIni8, %AutoSwitchIni1%
+		GuiControl,mainWindowG:,AutoSwitchIni1, %tmp3%
 	}
 	else
 	{
@@ -358,12 +438,12 @@ Up:
 		tmp1 = % EIni%tmptmp%
 		tmp2 = % AIni%tmptmp%
 		tmp3 = % AutoSwitchIni%tmptmp%
-		GuiControl,,EIni%tmptmp%, % EIni%tmp%
-		GuiControl,,EIni%tmp%, %tmp1%
-		GuiControl,,AIni%tmptmp%, % AIni%tmp%
-		GuiControl,,AIni%tmp%, %tmp2%
-		GuiControl,,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
-		GuiControl,,AutoSwitchIni%tmp%, %tmp3%
+		GuiControl,mainWindowG:,EIni%tmptmp%, % EIni%tmp%
+		GuiControl,mainWindowG:,EIni%tmp%, %tmp1%
+		GuiControl,mainWindowG:,AIni%tmptmp%, % AIni%tmp%
+		GuiControl,mainWindowG:,AIni%tmp%, %tmp2%
+		GuiControl,mainWindowG:,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
+		GuiControl,mainWindowG:,AutoSwitchIni%tmp%, %tmp3%
 	}
 	Goto UpdateVars
 
@@ -392,18 +472,18 @@ Down8:
 	tmp := 8
 	Goto Down
 Down:
-	Gui, Submit, NoHide
+	Gui, mainWindowG:Submit, NoHide
 	if tmp = 8
 	{	
 		tmp1 = %EIni1%
 		tmp2 = %AIni1%
 		tmp3 = %AutoSwitchIni1%
-		GuiControl,,EIni1, %EIni8%
-		GuiControl,,EIni8, %tmp1%
-		GuiControl,,AIni1, %AIni8%
-		GuiControl,,Aini8, %tmp2%
-		GuiControl,,AutoSwitchIni1, %AutoSwitchIni8%
-		GuiControl,,AutoSwitchIni8, %tmp3%
+		GuiControl,mainWindowG:,EIni1, %EIni8%
+		GuiControl,mainWindowG:,EIni8, %tmp1%
+		GuiControl,mainWindowG:,AIni1, %AIni8%
+		GuiControl,mainWindowG:,Aini8, %tmp2%
+		GuiControl,mainWindowG:,AutoSwitchIni1, %AutoSwitchIni8%
+		GuiControl,mainWindowG:,AutoSwitchIni8, %tmp3%
 	}
 	else
 	{
@@ -412,12 +492,12 @@ Down:
 		tmp1 = % EIni%tmptmp%
 		tmp2 = % AIni%tmptmp%
 		tmp3 = % AutoSwitchIni%tmptmp%
-		GuiControl,,EIni%tmptmp%, % EIni%tmp%
-		GuiControl,,EIni%tmp%, %tmp1%
-		GuiControl,,AIni%tmptmp%, % AIni%tmp%
-		GuiControl,,AIni%tmp%, %tmp2%
-		GuiControl,,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
-		GuiControl,,AutoSwitchIni%tmp%, %tmp3%
+		GuiControl,mainWindowG:,EIni%tmptmp%, % EIni%tmp%
+		GuiControl,mainWindowG:,EIni%tmp%, %tmp1%
+		GuiControl,mainWindowG:,AIni%tmptmp%, % AIni%tmp%
+		GuiControl,mainWindowG:,AIni%tmp%, %tmp2%
+		GuiControl,mainWindowG:,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
+		GuiControl,mainWindowG:,AutoSwitchIni%tmp%, %tmp3%
 	}
 	Goto UpdateVars
 
@@ -657,7 +737,7 @@ SetJoinMsgCoords:
 		joinX := 0
 		joinY := 0
 	}
-	GuiControl, Text, Coords, Currently: %joinX%, %joinY%
+	GuiControl,mainWindowG: Text, Coords, Currently: %joinX%, %joinY%
 	return
 
 FightJoin:
@@ -761,112 +841,204 @@ SaveSettings:
 
 LoadSettings:
 	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDL
-	GuiControl, Choose, DofusEndOfTurnButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, DofusEndOfTurnButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHK
-	GuiControl,, DofusEndOfTurnButtonHK, %tmp%
+	GuiControl,mainWindowG:, DofusEndOfTurnButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDLCheck
-	GuiControl,, DofusEndOfTurnButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, DofusEndOfTurnButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHKCheck
-	GuiControl,, DofusEndOfTurnButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, DofusEndOfTurnButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDL
-	GuiControl, Choose, HeroesEndOfTurnButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, HeroesEndOfTurnButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHK
-	GuiControl,, HeroesEndOfTurnButtonHK, %tmp%
+	GuiControl,mainWindowG:, HeroesEndOfTurnButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDLCheck
-	GuiControl,, HeroesEndOfTurnButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, HeroesEndOfTurnButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHKCheck
-	GuiControl,, HeroesEndOfTurnButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, HeroesEndOfTurnButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, LeftClickButtonDDL
-	GuiControl, Choose, LeftClickButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, LeftClickButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, LeftClickButtonHK
-	GuiControl,, LeftClickButtonHK, %tmp%
+	GuiControl,mainWindowG:, LeftClickButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, LeftClickButtonDDLCheck
-	GuiControl,, LeftClickButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, LeftClickButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, LeftClickButtonHKCheck
-	GuiControl,, LeftClickButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, LeftClickButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, RightClickButtonDDL
-	GuiControl, Choose, RightClickButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, RightClickButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, RightClickButtonHK
-	GuiControl,, RightClickButtonHK, %tmp%
+	GuiControl,mainWindowG:, RightClickButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, RightClickButtonDDLCheck
-	GuiControl,, RightClickButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, RightClickButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, RightClickButtonHKCheck
-	GuiControl,, RightClickButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, RightClickButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, SwitchNextButtonDDL
-	GuiControl, Choose, SwitchNextButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, SwitchNextButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, SwitchNextButtonHK
-	GuiControl,, SwitchNextButtonHK, %tmp%
+	GuiControl,mainWindowG:, SwitchNextButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, SwitchNextButtonDDLCheck
-	GuiControl,, SwitchNextButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, SwitchNextButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, SwitchNextButtonHKCheck
-	GuiControl,, SwitchNextButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, SwitchNextButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, SwitchLastButtonDDL
-	GuiControl, Choose, SwitchLastButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, SwitchLastButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, SwitchLastButtonHK
-	GuiControl,, SwitchLastButtonHK, %tmp%
+	GuiControl,mainWindowG:, SwitchLastButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, SwitchLastButtonDDLCheck
-	GuiControl,, SwitchLastButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, SwitchLastButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, SwitchLastButtonHKCheck
-	GuiControl,, SwitchLastButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, SwitchLastButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, StartBattleButtonDDL
-	GuiControl, Choose, StartBattleButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, StartBattleButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, StartBattleButtonHK
-	GuiControl,, StartBattleButtonHK, %tmp%
+	GuiControl,mainWindowG:, StartBattleButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, StartBattleButtonDDLCheck
-	GuiControl,, StartBattleButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, StartBattleButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, StartBattleButtonHKCheck
-	GuiControl,, StartBattleButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, StartBattleButtonHKCheck, %tmp%
 
 	IniRead, tmp, settings.ini, general, SetButton
-	GuiControl,, SetButton, %tmp%
+	GuiControl,mainWindowG:, SetButton, %tmp%
 	IniRead, tmp, settings.ini, general, joinButtonDDL
-	GuiControl, Choose, joinButtonDDL, %tmp%
+	GuiControl,mainWindowG: Choose, joinButtonDDL, %tmp%
 	IniRead, tmp, settings.ini, general, joinButtonHK
-	GuiControl,, joinButtonHK, %tmp%
+	GuiControl,mainWindowG:, joinButtonHK, %tmp%
 	IniRead, tmp, settings.ini, general, joinButtonDDLCheck
-	GuiControl,, joinButtonDDLCheck, %tmp%
+	GuiControl,mainWindowG:, joinButtonDDLCheck, %tmp%
 	IniRead, tmp, settings.ini, general, joinButtonHKCheck
-	GuiControl,, joinButtonHKCheck, %tmp%
+	GuiControl,mainWindowG:, joinButtonHKCheck, %tmp%
 
 	IniRead, joinX, settings.ini, general, joinX
 	IniRead, joinY, settings.ini, general, joinY
-	GuiControl, Text, Coords, Currently: %joinX%, %joinY%
+	GuiControl,mainWindowG: Text, Coords, Currently: %joinX%, %joinY%
 
 	IniRead, tmp, settings.ini, general, ControlKey
-	GuiControl, Choose, ControlKey, %tmp%
+	GuiControl,mainWindowG: Choose, ControlKey, %tmp%
 
 	Loop, 8
 	{	
 		IniRead, tmp1, settings.ini, characters, EIni%A_Index%
 		IniRead, tmp2, settings.ini, characters, AIni%A_Index%
 		IniRead, tmp3, settings.ini, characters, AutoSwitchIni%A_Index%
-		GuiControl,,EIni%A_Index%, %tmp1%
-		GuiControl,,AIni%A_Index%, %tmp2%
-		GuiControl,,AutoSwitchIni%A_Index%, %tmp3%
+		GuiControl,mainWindowG:,EIni%A_Index%, %tmp1%
+		GuiControl,mainWindowG:,AIni%A_Index%, %tmp2%
+		GuiControl,mainWindowG:,AutoSwitchIni%A_Index%, %tmp3%
 	}
 	goto UpdateVars
 
-GuiClose:
-	ExitApp
+
+mainWindowGuiClose:
+	ExitFunc()
 	return
 
 ; Functions
 ; =============================
 ; =============================
+
+CheckArchMonster(){
+	x = 0
+	y = 0
+	a1 = amob1.png
+	a2 = amob2.png
+	a3 = amob3.png
+	a4 = amob4.png
+	transparency := 75
+	Loop 2{
+		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a1%
+		If !(!x or !y){
+			Return True
+		}
+
+		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a2%
+		If !(!x or !y){
+			Return True
+		}
+
+		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a3%
+		If !(!x or !y){
+			Return True
+		}
+
+		ImageSearch, x, y, 0, 0, 2600, 1400, *%transparency% %a4%
+		If !(!x or !y){
+			Return True
+		}
+		transparency += 25
+	}
+	Return False
+}
+
+getCoords(){ ; Gets the current map coordinates by scanning the upper left screen
+	; For identification, we need to create a text library,
+	; Of course, the following text library is not strong enough,
+	; Perhaps in other computers, other screen resolutions,
+	; Other browser magnification, different fonts, need to regenerate.
+	; You can add the newly generated to the following existing text library,
+	; To enhance the generality of this text library.
+	Text:="|<->*105$10.zy0M1U60TzU"
+	Text.="|<,>*106$8.zy7VsS7VsQD3VwTzU"
+	Text.="|<0>*107$17.zzzw1zk1z01w01sC3kw71w63sA7kMDUkT1Uy31w63sA7kMDUkT1Uy31w73kS3Uw01w07w0Tw1zzzw"
+	Text.="|<1>*104$12.zzztzVw1k1U1U1X1j1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1zzU"
+	Text.="|<2>*107$17.zzzy1zk0z00w01sC3kS31w63sDzkTz1zy3zsDzkTz1zw3zkDzUzy3zs7zUTz1zw00s01k03U07zzw"
+	Text.="|<3>*108$17.zzzw1zk0z01w01sC3ky3zw7zsDzkzz1zU7z0Ty0zw0zzUzzUzz1zy31w63sC3UQ01w03s0Dw1zzzw"
+	Text.="|<4>*106$17.zzzzkTz0zy1zs3zk7z0Dy0Ts0zl1z23yA7sMDkkT3Uy71sS3k01U0300600Dz1zy3zw7zsDzkTzzw"
+	Text.="|<5>*107$17.zzzk0DU0T00y01wDzsTzUzz1zy3zw07s07k07UkDvkTzkTzUzz1zy31w73sC3Uw01w07w0Tw1zzzw"
+	Text.="|<6>*108$16.zzzz3zkDy0zk3y1zkDz1zwDzUly01s03U0C1UMD1Uw63sMDVUy63sMD1kQ700y03w0Ts7zzzU"
+	Text.="|<7>*105$17.zzz00600A00M00zz1zy7zsDzkTzVzy3zw7zkTzUzz3zw7zsDzkzz1zy3zsDzkTzUzy3zw7zkDzzzw"
+	Text.="|<8>*107$16.zzzk7y07k0T00s63UwC3kMD3UwD1Uw07s0zk3w07kMC3ksD1Uw63kMD1Uw600w03s0Tk3zzzU"
+	Text.="|<9>*107$16.zzzs7y0Dk0T01sC3UwC3kMT1Vw67kMD1Uw61UQ01k07U0TX3zwDzUzw7zUTk3z0Tw3zkzzzzU"
+
+	t1:=A_TickCount
+	;------------------------------
+	OCR:=FindTextOCR(0, 90, 250, 130, 0.05, 0.05, Text)
+	len := StrLen(OCR)
+	testchar := SubStr(OCR, len, len)
+	IfInString, testchar, `,
+		OCR := SubStr(OCR, 1, len-1)
+	;------------------------------
+	t1:=A_TickCount-t1
+	;MsgBox, 4096, OCR, OCR Result: [%OCR%] in %t1% ms.
+	Return %OCR%
+}
+
+FindTextOCR(nX, nY, nW, nH, err1, err0, Text, Interval=20){
+  OCR:="", Right_X:=nX+nW-1
+  While (ok:=FindText(nX, nY, nW, nH, err1, err0, Text))
+  {
+    ; For multi text search, This is the number of text images found
+    Loop, % ok.MaxIndex()
+    {
+      ; X is the X coordinates of the upper left corner
+      ; and W is the width of the image have been found
+      i:=A_Index, x:=ok[i].1, y:=ok[i].2
+        , w:=ok[i].3, h:=ok[i].4, comment:=ok[i].id
+      ; We need the leftmost X coordinates
+      if (A_Index=1 or x<Left_X){
+        Left_X:=x, Left_W:=w, Left_OCR:=comment
+      }
+    }
+    ; If the interval exceeds the set value, add "*" to the result
+    OCR.=(A_Index>1 and Left_X-nX-1>Interval ? "*":"") . Left_OCR
+    ; Update nX and nW for next search
+    nX:=Left_X+Left_W-1, nW:=Right_X-nX+1
+  }
+  Return, OCR
+}
+
 rand(min, max){
 	random, rand, min, max
 	return rand
 }
 
-ExitFunc(ExitReason, ExitCode){
+ExitFunc(){
 	gosub SaveSettings
-	return
+	ExitApp
 }
 
 ; Hotkeys

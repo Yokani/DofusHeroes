@@ -18,10 +18,6 @@ Current version: v1.0 https://github.com/Yokani/DofusHeroes/releases/tag/v1.0
 
 General Information:
 
-<a href="https://ibb.co/YD6X2L6"><img src="https://i.ibb.co/bHxF1Kx/firsttab.png" alt="firsttab" border="0"></a>
-<a href="https://ibb.co/GvGg3ks"><img src="https://i.ibb.co/kgzY603/secondtab.png" alt="secondtab" border="0"></a>
-<a href="https://ibb.co/qCy2Wp1"><img src="https://i.ibb.co/1Mv4dT2/thirdtab.png" alt="thirdtab" border="0"></a>
-
 If minimized the program lands in tray. Click on the tray button to open it again. 
 The settings are saved on correct termination (e.g. by pressing the "X" in the window). If you kill it, it won't save!
 The settings are saved in a settings.ini file at the current directory. 

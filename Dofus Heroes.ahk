@@ -4,7 +4,6 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 #Include, findtext.ahk
-#Include, DH-GUI.ahk
 
 #SingleInstance, force
 OnExit("ExitFunc")

@@ -3,123 +3,36 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-#Include, findtext.ahk
-
 #SingleInstance, force
 OnExit("ExitFunc")
 
-; Variables
-; ==============================================================================================================================================================================
-accounts := 0
-ini1 := "", ini2 := "", ini3 := "", ini4 := "", ini5 := "", ini6 := "", ini7 := "", ini8 := ""
-iniAutoSwitch1 := 0, iniAutoSwitch2 := 0, iniAutoSwitch3 := 0, iniAutoSwitch4 := 0, iniAutoSwitch5 := 0, iniAutoSwitch6 := 0, iniAutoSwitch7 := 0, iniAutoSwitch8 := 0
-tmp := 0
-joinX = 0
-joinY = 0
-amobTracking := False
-guiActive := False
-currentAMobs := ""
-aMobAmount := 0
-
 ; Initialization
 ; ==============================================================================================================================================================================
+; Includes, replaced by code in external script
+; ================================================================
+#Include, findtext.ahk
+#Include, DHvariables.ahk
+#Include, DHmainFunctions.ahk
 
-IfNotExist, %A_WorkingDir%\settings.ini
-{
-	IniWrite, v2, settings.ini, currentVersion, version
-	IniWrite, F5, settings.ini, general, DofusEndOfTurnButtonDDL
-	IniWrite, 1, settings.ini, general, DofusEndOfTurnButtonDDLCheck
-	IniWrite, 0, settings.ini, general, DofusEndOfTurnButtonHKCheck
-	IniWrite, MButton, settings.ini, general, HeroesEndOfTurnButtonDDL
-	IniWrite, 1, settings.ini, general, HeroesEndOfTurnButtonDDLCheck
-	IniWrite, 0, settings.ini, general, HeroesEndOfTurnButtonHKCheck
-	IniWrite, !LButton, settings.ini, general, LeftClickButtonDDL
-	IniWrite, 1, settings.ini, general, LeftClickButtonDDLCheck
-	IniWrite, 0, settings.ini, general, LeftClickButtonHKCheck
-	IniWrite, !RButton, settings.ini, general, RightClickButtonDDL
-	IniWrite, 1, settings.ini, general, RightClickButtonDDLCheck
-	IniWrite, 0, settings.ini, general, RightClickButtonHKCheck
-	IniWrite, XButton2, settings.ini, general, SwitchNextButtonDDL
-	IniWrite, 1, settings.ini, general, SwitchNextButtonDDLCheck
-	IniWrite, 0, settings.ini, general, SwitchNextButtonHKCheck
-	IniWrite, !XButton2, settings.ini, general, SwitchLastButtonDDL
-	IniWrite, 1, settings.ini, general, SwitchLastButtonDDLCheck
-	IniWrite, 0, settings.ini, general, SwitchLastButtonHKCheck
-	IniWrite, <, settings.ini, general, StartBattleButtonDDL
-	IniWrite, 1, settings.ini, general, StartBattleButtonDDLCheck
-	IniWrite, 0, settings.ini, general, StartBattleButtonHKCheck
-
-	IniWrite, #, settings.ini, general, SetButton
-	IniWrite, XButton1, settings.ini, general, joinButtonDDL
-	IniWrite, 1, settings.ini, general, joinButtonDDLCheck
-	IniWrite, 0, settings.ini, general, joinButtonHKCheck
-	IniWrite, 0, settings.ini, general, joinX
-	IniWrite, 0, settings.ini, general, joinY
-
-	IniWrite, Alt, settings.ini, general, ControlKey
-	
-	Loop, 8
-	{
-		IniWrite, "", settings.ini, characters, EIni%A_Index%
-		IniWrite, 0, settings.ini, characters, AIni%A_Index%
-		IniWrite, 0, settings.ini, characters, AutoSwitchIni%A_Index%
-	}
-}
-
-Menu, Tray, NoStandard
-Menu, Tray, Add, Settings, loadGUI
-Menu, Tray, Add, Close, mainWindowGuiClose
-Menu, Tray, Default, Settings
-Menu, Tray, Click, 1
-Menu, Tray, Tip, Dofus Heroes
-
-OnMessage(0x112, "WM_SYSCOMMAND")
-guiActive := 0
-gosub, loadGUI
-goto LoadSettings
-return
-
-WM_SYSCOMMAND(wParam)
-{
-	; window minimize button
-	If wParam = 0xF020
-	{
-		gosub SaveSettings
-		gosub guiToggle
-		Gui, mainWindowG:Destroy
-	}
-	; window close button
-	If wParam = 0xF060
-	{
-		ExitFunc()
-	}
-	Return
-}
-
+goto scriptInit
 ; Labels
 ; ==============================================================================================================================================================================
 ; ==============================================================================================================================================================================
-
-guiToggle:
-	if (guiActive = 1){
-		guiActive := 0
-	}else{
-		guiActive := 1
-	}
-
 DButton:
 	GuiControl,mainWindowG:Focus, DButt
 	return
 
-doNothing:
+DButtonS:
+	GuiControl,amobTracker:Focus, DButtS
 	return
 
 loadGUI:
-	if (guiActive = 1){
-		return
-	}
+	Gui, mainWindowG:Show, Center AutoSize, %mainWindowTitle%
+	return
+
+initGUI:
 	Gui, mainWindowG:Font, cBlack s12 norm, Copperplate Gothic Bold
-	Gui, mainWindowG:Add, Tab3, x5 y5 w700 Buttons cBlack, Characters|Hotkeys|Advanced
+	Gui, mainWindowG:Add, Tab3, x5 y5 w700 Buttons cBlack, Characters|Hotkeys|Advanced|Track-n-Traveler
 	Gui, mainWindowG:Tab, 1
 	
 	; Character Initiative Section
@@ -218,21 +131,93 @@ loadGUI:
 	Gui, mainWindowG:Add, Hotkey, xp y+10 w90 vJoinButtonHK gUpdateVars
 	Gui, mainWindowG:Add, Edit, x+10 yp-30 w350 ReadOnly -E0x200 -VScroll, On this button all characters, whose window is not focused click at the above set mouse position, in order to join the fight of the current character.
 
-	; archmonster section
+	; FindText section 
+	Gui, mainWindowG:Tab
+	Gui, mainWindowG:Tab, 4
+
+	; find stuff section
 	Gui, mainWindowG:Font, cBlack s14 underline, Copperplate Gothic Bold
-	Gui, mainWindowG:Add, Text, x10 y+10, ArchMonster Tracker:
+	Gui, mainWindowG:Add, Text, x20 y40, Dofus Heroes Track-n-Traveler:
 	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
 
-	Gui, mainWindowG:Add, Button, x10 y+10 gamobTracking, Start / Stop archmonster tracking
+	Gui, mainWindowG:Add, Button, x20 y+10 gtrackerStart, Start or Stop  Track-n-Traveler
 	Gui, mainWindowG:Add, Text, x+10 yp+5 vTracker, Currently not tracking
 
+	Gui, mainWindowG:Font, cBlack s14 underline, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Text, x20 y+30, FindText script by FeiYue
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
+
+	Gui, mainWindowG:Add, Button, x20 y+10 gstartFindTextGUI, Run FindText
+	Gui, mainWindowG:Add, CheckBox, vStopIfFound gQuickUpdateVars x+25 yp h25, stop traveling when spotting something
+
+	Gui, mainWindowG:Add, Text, x40 y+10, Text output of FindText
+	Gui, mainWindowG:Add, Text, x340 yp, GetRange output
+	Gui, mainWindowG:Add, Text, x540 yp, Error
+	Gui, mainWindowG:Add, Text, x640 yp, active
+	Gui, mainWindowG:Font, cBlack s8 norm, Arial
+
+	Loop, 3
+	{
+		Gui, mainWindowG:Add, Edit, vFTScan%A_Index% gQuickUpdateVars x20 y+5 w300 h25,
+		Gui, mainWindowG:Add, Edit, vFTRange%A_Index% gQuickUpdateVars x+5 yp w200 h25,
+		Gui, mainWindowG:Add, Edit, vFTError%A_Index% gQuickUpdateVars x+5 yp w100 h25,
+		Gui, mainWindowG:Add, CheckBox, vFTCheck%A_Index% gQuickUpdateVars x+25 yp h25,
+	}
+	Gui, mainWindowG:Font, cBlack s12 underline, Copperplate Gothic Bold
+	Gui, mainWindowG:Add, Text, x70 y+20, Coordinate Setup
+	
+	
+
+	Gui, mainWindowG:Font, cBlack s8 norm, Arial
+	Gui, mainWindowG:Add, Button, x+10 yp h20 gtestCurrentCoords, test it!
+	Gui, mainWindowG:Add, Edit, vCoordSetupRange gQuickUpdateVars x325 yp w200 h20,
+	Gui, mainWindowG:Add, Edit, vCoordSetupError gQuickUpdateVars x+5 yp w100 h20,
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
+
+	Gui, mainWindowG:Add, Text, x40 y+10, Text output of FindText
+
+	Gui, mainWindowG:Font, cBlack s8 norm, Arial
+	eLabels := ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", ","]
+	Loop, 12
+	{
+		Gui, mainWindowG:Add, Text, x20 y+1,% eLabels[A_Index]
+		Gui, mainWindowG:Add, Edit, vCoordSetupT%A_Index% gQuickUpdateVars x30 yp w600 h20,
+	}
+	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
+
+	Gui, mainWindowG:Add, Text, x550 y60, Travel Mode
+	Gui, mainWindowG:Add, Radio, vClipBoardMode  gQuickUpdateVars x550 y+10, clipboardMode
+	Gui, mainWindowG:Add, Radio, vInsertMode gQuickUpdateVars x550 y+10, insertMode
+
 	Gui, mainWindowG:Color, a6a6a6, ffffff, 0
-	Gui, mainWindowG:Show, Center AutoSize, Dofus Heroes
-	guiActive := 1
 	goto LoadSettings
 
-UpdateVars:
+startFindTextGUI:
+	Run, %A_AHKPath% "findtext.ahk"
+	return
 
+UpdateVarsTracker:
+	Gui, tracker:Submit, NoHide
+
+	if(TravelRouteDDL = "Astrub")
+		chosenRoute := allAstrubRoutes
+	if(TravelRouteDDL = "Amakna")
+		chosenRoute := allAmaknaSufokiaRoutes
+	if(TravelRouteDDL = "Bonta")
+		chosenRoute := allBontaRoutes
+	if(TravelRouteDDL = "Brakmar")
+		chosenRoute := allBrakmarRoutes
+	if(TravelRouteDDL = "Cania")
+		chosenRoute := allCaniaMainRoutes
+	if(TravelRouteDDL = "Koalak")
+		chosenRoute := allKoalakRoutes
+	return
+
+QuickUpdateVars:
+	Gui, mainWindowG:Submit, NoHide
+	return
+
+UpdateVars:
 	if HeroesEndOfTurnButtonDDL
 		Hotkey % HeroesEndOfTurnButtonDDL, HeroesEndOfTurn, off UseErrorLevel
 	if HeroesEndOfTurnButtonHK
@@ -346,441 +331,230 @@ UpdateVars:
 	accounts--
 	return
 
-amobtracking:
-	SetTimer, archProcess, % (amobTracking := !amobTracking) ? 1000 : "Off"
-	if %amobTracking%{
+trackerStart:
+	trackerActive := !trackerActive
+	if(trackerActive){
 		GuiControl,mainWindowG:,Tracker,tracking...!
-		Gui, amobtrack:+AlwaysOnTop -SysMenu
-		Gui, amobtrack:Font, cBlack s11 norm, Lucida Sans Unicode
-		Gui, amobtrack:Add, Edit, x20 y20 w180 vArchMobs ReadOnly -VScroll -E0x200
-		GuiWidth := 200
-		Guixpos := A_ScreenWidth - GuiWidth
-		Gui, amobtrack:Color, a6a6a6, ffffff, 0
-		Gui, amobtrack:Show, y0 x%Guixpos% h200 w200, archmonsters
+		gosub loadTrackGUI
+		gosub UpdateVarsTracker
+		SetTimer, trackProcess, 250
 	}else{
+		SetTimer, trackProcess, Off
 		GuiControl,mainWindowG:,Tracker,currently not tracking
-		currentAMobs := ""
-		GuiControl,amobtrack:,ArchMobs,%currentAMobs%
-		Gui, amobtrack:Destroy
+		gosub clearTracker
+		Gui, tracker:Destroy
 	}
 	Return
 
-archProcess:
-	checke := CheckArchMonster()
-	if %checke%{
-		; Get & Write Pos to GUI
-		result := getCoords()
-		coords = [%result%]
-		IfInString, currentAMobs, %coords%
-			Return
-		if %currentAMobs%{
-			aMobAmount += 1
-			if (Mod(aMobAmount, 2) = 0){
-				currentAMobs=%currentAMobs% , `n%coords%
-			}else{
-				currentAMobs=%currentAMobs% , %coords%
-			}
-		}else{
-			currentAMobs=%coords%
+loadTrackGUI:
+	Gui, tracker:+AlwaysOnTop -SysMenu
+	Gui, tracker:Font, cBlack s10 norm, Lucida Sans Unicode
+	Gui, tracker:Add, Text, x20 y10 w340 h20 vtrackerActive, 
+	Gui, tracker:Add, Edit, x20 y+5 w257 h25 vFTCoords1 ReadOnly -VScroll -E0x200
+	Gui, tracker:Add, Edit, x20 y+1 w257 h25 vFTCoords2 ReadOnly -VScroll -E0x200
+	Gui, tracker:Add, Edit, x20 y+1 w257 h25 vFTCoords3 ReadOnly -VScroll -E0x200
+	Gui, tracker:Add, Button, x+10 yp-25 h25 gclearTracker, clear history
+	Gui, tracker:Add, Button, x20 y+30 h25 vTravelButton gflipTravelBreak, break travel
+	Gui, tracker:Add, DropDownList, vTravelRouteDDL gUpdateVarsTracker x+25 yp w90, Amakna|Astrub|Bonta|Brakmar|Koalak|Cania
+	GuiControl,tracker:Choose,TravelRouteDDL,Astrub
+	Gui, tracker:Add, Button, x+5 yp h25 gstartTravel, start chosen route
+	Gui,  tracker:Add, Text, x20 y+10 w280 h20 vcAutoRoute, Currently not running any routes...
+	Gui, tracker:Add, Button, x+17 yp h25 gskipTravelRoute vSkipButton, skip this
+	Gui,  tracker:Add, Text, x20 y+0 w280 h20 vpendingInfos, 
+	GuiWidth := 415
+	Guixpos := A_ScreenWidth - GuiWidth - 5
+	Gui, tracker:Color, a6a6a6, ffffff, 0
+	Gui, tracker:Show, y0 x%Guixpos% h200 w%GuiWidth%, DH Tracker & Traveler
+	return
+
+clearTracker:
+	Loop, 3
+	{
+		tracked%A_Index% := []
+		GuiControl,tracker:,FTCoords%A_Index%,
+	}
+	return
+
+trackProcess:
+	; only track if main character is logged in and no gui window is focused
+	if(WinExist(mainChar))
+	{
+		if(WinActive("DH Tracker & Traveler") or WinActive("Dofus Heroes")){
+			GuiControl,tracker:,trackerActive, Not tracking! (GUI focus)
+			return
 		}
-		GuiControl,amobtrack:,ArchMobs,%currentAMobs%
+	}else{
+		GuiControl,tracker:,trackerActive,Not tracking stuff! (mainChar not ingame)
+		return
+	}
+	GuiControl,tracker:,trackerActive,Tracking stuff...
+
+	Loop, 3
+	{
+		if(FTCheck%A_Index% and FTScan%A_Index% and FTRange%A_Index%){
+			ok := CheckForThis(FTScan%A_Index%, FTRange%A_Index%, FTError%A_Index%)
+			if(ok){
+				whatFound := ok.1.id
+				if(autoTraveling and StopIfFound){
+					gosub flipTravelBreak
+					autoTraveling := False
+				}
+				gosub getCurrentCoords
+				if(HasVal(tracked%A_Index%, result) > 0)
+					return
+				tracked%A_Index%.Push(result)
+				if(tracked%A_Index%.MaxIndex() = 4)
+					tracked%A_Index%.RemoveAt(1)
+				message := (tracked%A_Index%.MaxIndex() > 0 ? whatFound ": " tracked%A_Index%[1] : "") (tracked%A_Index%.MaxIndex() > 1 ? ", " tracked%A_Index%[2] : "") (tracked%A_Index%.MaxIndex() > 2 ? ", " tracked%A_Index%[3] : "")
+				GuiControl,tracker:,FTCoords%A_Index%, %message%
+			}else{
+				; do nothing...
+			}
+		}
+	}
+	Return
+
+getCurrentCoords:
+	txtCoord := ""
+	Loop, 12
+	{
+		txt := CoordSetupT%A_Index%
+		StringReplace , txt, txt, %A_Space%,,All
+		StringReplace , txt, txt, `",,All
+		StringReplace , txt, txt, Text:=,,All
+		txtCoord := txtCoord txt
+	}
+	raCoord := CoordSetupRange
+	StringReplace , raCoord, raCoord, %A_Space%,,All
+	raCoord := StrSplit(raCoord, ",")
+	errCoord := CoordSetupError
+	if(errCoord = "")
+		errCoord := 0.0
+	result := getCoords(txtCoord, raCoord, errCoord)
+	return
+
+testCurrentCoords:
+	gosub getCurrentCoords
+	MsgBox, Are your current coordinates [%result%] ?
+	return
+
+startTravel:
+	keys := []
+	for key, value in chosenRoute
+	{
+		keys.Push(key)
+	}
+	Loop
+	{
+		min := 1
+		max := keys.MaxIndex()
+		randomIDX := rand(min, max)
+		currentRoute := chosenRoute[keys[randomIDX]]
+		c:=keys[randomIDX]
+		GuiControl,tracker:,cAutoRoute,Now running: %c%
+		keys.Remove(randomIDX)
+		autoTraveling  := True
+		gosub autoTravel
+		autoTraveling  := False
+		GuiControl,tracker:,cAutoRoute,Currently not running any routes...
+		GuiControl,tracker:,pendingInfos, 
+		skipRouteTrigger := False
+		skipForceTrigger := False
+		GuiControl,tracker:,SkipButton, skip this
+		if(min = max){
+			break
+		}
+	}
+	return
+
+autoTravel:
+	Loop, Parse, currentRoute, |
+	{
+		if(autoTravelBreak)
+			gosub autoTravelBreaking
+
+		target := A_LoopField
+		toCoords(target, chatKey, mainChar)
+		oldCoords := ""
+		noChangeCounter := 0
+
+		Loop {
+			if(skipForceTrigger)
+				return
+			if(autoTravelBreak)
+				gosub autoTravelBreaking
+			if(autoTravelBreakFinished){
+				autoTravelBreakFinished := False
+				sleep  500
+				toCoords(target, chatKey, mainChar)
+			}
+			gosub getCurrentCoords
+			if(result = oldCoords)
+				noChangeCounter := noChangeCounter + 1
+			else
+				noChangeCounter := 0
+			if(noChangeCounter = 10){
+				noChangeCounter := 0
+				toCoords(target, chatKey, mainChar)
+			}
+			if(result = target){
+				; target reached, doing next coordinates or anything else pending...
+				if(skipRouteTrigger)
+					return
+				break
+			}
+			sleep 1000
+			oldCoords := result
+		}
+		sleep 1000
+	}
+	return
+
+skipTravelRoute:
+	if(skipRouteTrigger)
+		skipForceTrigger := True
+	GuiControl,tracker:,SkipButton, Skip now!
+	GuiControl,tracker:,pendingInfos, Skipping after reaching current destination...
+	skipRouteTrigger := True
+	return
+
+autoTravelBreaking:
+	Loop{
+		if(!autoTravelBreak)
+			break
+		sleep 2000
+		}
+	autoTravelBreakFinished := True
+	return
+
+flipTravelBreak:
+	autoTravelBreak := !autoTravelBreak
+	if(autoTravelBreak){
+		stopAutoTravel(mainChar, chatKey)
+		GuiControl,tracker:,TravelButton, continue?
+	}else{
+		GuiControl,tracker:,TravelButton, break travel
 	}
 	Return
 
 RunHelp:
-	hkexplanation = Hotkey Legend:`n^ : Ctrl/Strg`n! : Alt`n+ : Shift`nXButton1/2 : special mouse buttons, useally on the left side`nLButton/RButton/MButton : Left, right and middle mouse buttons`nFor example !LButton = Alt + Left Mouse Button`n`nFor a detailed description of features visit`nhttps://github.com/Yokani/DofusHeroes
+	hkexplanation = Hotkey Legend:`n^ : Ctrl/Strg`n! : Alt`n+ : Shift`nXButton1/2 : special mouse buttons, useally on the left side`nLButton/RButton/MButton : Left, right and middle mouse buttons`nFor example !LButton = Alt + Left Mouse Button`n`nBe careful when using special keys like circumflex, caret, insert, delete, etc. - they might not work!`n`nFor a detailed description of features visit`nhttps://github.com/Yokani/DofusHeroes
 	MsgBox % hkexplanation
 	Return
 
-Up1:
-	tmp := 1
-	Goto Up
-Up2:
-	tmp := 2
-	Goto Up
-Up3:
-	tmp := 3
-	Goto Up
-Up4:
-	tmp := 4
-	Goto Up
-Up5:
-	tmp := 5
-	Goto Up
-Up6:
-	tmp := 6
-	Goto Up
-Up7:
-	tmp := 7
-	Goto Up
-Up8:
-	tmp := 8
-	Goto Up
-Up:
-	Gui, mainWindowG:Submit, NoHide
-	if tmp = 1
-	{	
-		tmp1 = %EIni8%
-		tmp2 = %AIni8%
-		tmp3 = %AutoSwitchIni8%
-		GuiControl,mainWindowG:,EIni8, %EIni1%
-		GuiControl,mainWindowG:,EIni1, %tmp1%
-		GuiControl,mainWindowG:,AIni8, %AIni1%
-		GuiControl,mainWindowG:,AIni1, %tmp2%
-		GuiControl,mainWindowG:,AutoSwitchIni8, %AutoSwitchIni1%
-		GuiControl,mainWindowG:,AutoSwitchIni1, %tmp3%
-	}
-	else
-	{
-		tmptmp = %tmp%
-		tmptmp--
-		tmp1 = % EIni%tmptmp%
-		tmp2 = % AIni%tmptmp%
-		tmp3 = % AutoSwitchIni%tmptmp%
-		GuiControl,mainWindowG:,EIni%tmptmp%, % EIni%tmp%
-		GuiControl,mainWindowG:,EIni%tmp%, %tmp1%
-		GuiControl,mainWindowG:,AIni%tmptmp%, % AIni%tmp%
-		GuiControl,mainWindowG:,AIni%tmp%, %tmp2%
-		GuiControl,mainWindowG:,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
-		GuiControl,mainWindowG:,AutoSwitchIni%tmp%, %tmp3%
-	}
-	Goto UpdateVars
+scriptInit:
+	Menu, Tray, NoStandard
+	Menu, Tray, Icon, dhicon.ico
+	Menu, Tray, Add, Settings, loadGUI
+	Menu, Tray, Add, Close, mainWindowGuiClose
+	Menu, Tray, Default, Settings
+	Menu, Tray, Click, 1
+	Menu, Tray, Tip, Dofus Heroes
 
-Down1:
-	tmp := 1
-	Goto Down
-Down2:
-	tmp := 2
-	Goto Down
-Down3:
-	tmp := 3
-	Goto Down
-Down4:
-	tmp := 4
-	Goto Down
-Down5:
-	tmp := 5
-	Goto Down
-Down6:
-	tmp := 6
-	Goto Down
-Down7:
-	tmp := 7
-	Goto Down
-Down8:
-	tmp := 8
-	Goto Down
-Down:
-	Gui, mainWindowG:Submit, NoHide
-	if tmp = 8
-	{	
-		tmp1 = %EIni1%
-		tmp2 = %AIni1%
-		tmp3 = %AutoSwitchIni1%
-		GuiControl,mainWindowG:,EIni1, %EIni8%
-		GuiControl,mainWindowG:,EIni8, %tmp1%
-		GuiControl,mainWindowG:,AIni1, %AIni8%
-		GuiControl,mainWindowG:,Aini8, %tmp2%
-		GuiControl,mainWindowG:,AutoSwitchIni1, %AutoSwitchIni8%
-		GuiControl,mainWindowG:,AutoSwitchIni8, %tmp3%
-	}
-	else
-	{
-		tmptmp = %tmp%
-		tmptmp++
-		tmp1 = % EIni%tmptmp%
-		tmp2 = % AIni%tmptmp%
-		tmp3 = % AutoSwitchIni%tmptmp%
-		GuiControl,mainWindowG:,EIni%tmptmp%, % EIni%tmp%
-		GuiControl,mainWindowG:,EIni%tmp%, %tmp1%
-		GuiControl,mainWindowG:,AIni%tmptmp%, % AIni%tmp%
-		GuiControl,mainWindowG:,AIni%tmp%, %tmp2%
-		GuiControl,mainWindowG:,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
-		GuiControl,mainWindowG:,AutoSwitchIni%tmp%, %tmp3%
-	}
-	Goto UpdateVars
-
-showIni1:
-	if WinExist(ini1)
-		WinActivate
-	return
-
-showIni2:
-	if WinExist(ini2)
-		WinActivate
-	return
-
-showIni3:
-	if WinExist(ini3)
-		WinActivate
-	return
-
-showIni4:
-	if WinExist(ini4)
-		WinActivate
-	return
-
-showIni5:
-	if WinExist(ini5)
-		WinActivate
-	return
-
-showIni6:
-	if WinExist(ini6)
-		WinActivate
-	return
-
-showIni7:
-	if WinExist(ini7)
-		WinActivate
-	return
-
-showIni8:
-	if WinExist(ini8)
-		WinActivate
-	return
-
-startBattle:
-	SetKeyDelay, 10, 10
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinExist(ini%A_Index%)
-			{
-				if DofusEndOfTurnButtonDDLCheck
-					ControlSend,, {%DofusEndOfTurnButtonDDL%}
-				else
-					ControlSend,, {%DofusEndOfTurnButtonHK%}
-			}
-			sleep, % rand(25, 125)
-		}
-	}
-	return
-
-switchNext:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinActive(ini%A_Index%)
-			{
-				if A_Index = %accounts%
-				{
-					tmp = 1
-				}
-				else
-				{
-					tmp = %A_Index%
-					tmp++
-				}
-				if WinExist(ini%tmp%)
-					WinActivate
-				return
-			}
-			sleep 50
-		}
-	}
-	return
-
-switchLast:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			index := A_Index
-			if WinActive(ini%index%)
-			{
-
-				if index = 1
-				{
-					if WinExist(ini%accounts%)
-					{
-						WinActivate
-						return
-					}
-				}
-				else
-				{
-					tmp = %index%
-					tmp--
-				}
-				if WinExist(ini%tmp%)
-					WinActivate
-				return
-			}
-			sleep 50
-		}
-	}
-	return
-
-HeroesEndOfTurn:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinActive(ini%A_Index%)
-			{
-				if iniAutoSwitch%A_Index%
-				{
-					if DofusEndOfTurnButtonDDLCheck
-						ControlSend,, {%DofusEndOfTurnButtonDDL%}
-					else
-						ControlSend,, {%DofusEndOfTurnButtonHK%}
-					sleep 100
-					goto switchNext
-				}
-				else
-				{
-					if DofusEndOfTurnButtonDDLCheck
-						ControlSend,, {%DofusEndOfTurnButtonDDL%}
-					else
-						ControlSend,, {%DofusEndOfTurnButtonHK%}
-					sleep 100
-					return
-				}
-			}
-			else
-			{
-				sleep, % rand(25, 100)
-			}
-		}
-	}
-	return
-
-ClientLeftClick:
-	MouseGetPos, xpos, ypos
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinExist(ini%A_Index%)
-				ControlClick, x%xpos% y%ypos%,,, L, 1
-			sleep, % rand(25, 75)
-
-		}
-	}
-	return
-
-ClientRightClick:
-	MouseGetPos, xpos, ypos
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinExist(ini%A_Index%)
-				ControlClick, x%xpos% y%ypos%,,, R, 1
-			sleep, % rand(25, 75)
-		}
-	}
-	return
-
-SetJoinMsgCoords:
-	MouseGetPos, joinX, joinY
-	if joinX <= 0 or joinY <= 0
-	{
-		joinX := 0
-		joinY := 0
-	}
-	GuiControl,mainWindowG: Text, Coords, Currently: %joinX%, %joinY%
-	return
-
-FightJoin:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinExist(ini%A_Index%) and not WinActive(ini%A_Index%)
-				ControlClick, x%joinX% y%joinY%,,, L, 1
-			sleep, % rand(25, 75)
-
-		}
-	}
-	return
-
-InviteMyCharacters:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
-	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
-		Loop, %accounts%
-		{
-			if WinExist(ini%A_Index%) and not WinActive(ini%A_Index%)
-				
-			sleep, % rand(25, 75)
-
-		}
-	}
+	OnMessage(0x112, "WM_SYSCOMMAND")
+	gosub initGUI
+	gosub loadGUI
+	gosub LoadSettings
 	return
 
 SaveSettings:
@@ -828,6 +602,24 @@ SaveSettings:
 	IniWrite, % joinX, settings.ini, general, joinX
 	IniWrite, % joinY, settings.ini, general, joinY
 
+	IniWrite, % StopIfFound, settings.ini, findtextstuff, StopIfFound
+	IniWrite, % ClipBoardMode, settings.ini, findtextstuff, ClipBoardMode
+	IniWrite, % InsertMode, settings.ini, findtextstuff, InsertMode
+
+	Loop, 3
+	{
+		IniWrite, % FTScan%A_Index%, settings.ini, findtextstuff, FTScan%A_Index%
+		IniWrite, % FTRange%A_Index%, settings.ini, findtextstuff, FTRange%A_Index%
+		IniWrite, % FTError%A_Index%, settings.ini, findtextstuff, FTError%A_Index%
+		IniWrite, % FTCheck%A_Index%, settings.ini, findtextstuff, FTCheck%A_Index%
+	}
+	IniWrite, % CoordSetupRange, settings.ini, findtextstuff, CoordSetupRange
+	IniWrite, % CoordSetupError, settings.ini, findtextstuff, CoordSetupError
+	Loop, 12
+	{
+		IniWrite, % CoordSetupT%A_Index%, settings.ini, findtextstuff, CoordSetupT%A_Index%
+	}
+	
 	IniWrite, % ControlKey, settings.ini, general, ControlKey
 
 	Loop, 8
@@ -839,155 +631,190 @@ SaveSettings:
 	return
 
 LoadSettings:
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDL
-	GuiControl,mainWindowG: Choose, DofusEndOfTurnButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHK
+	tmp := ""
+	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDL,
+	GuiControl,mainWindowG:Choose, DofusEndOfTurnButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHK,
 	GuiControl,mainWindowG:, DofusEndOfTurnButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDLCheck
+	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDLCheck,0
 	GuiControl,mainWindowG:, DofusEndOfTurnButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHKCheck
+	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHKCheck,1
 	GuiControl,mainWindowG:, DofusEndOfTurnButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDL
-	GuiControl,mainWindowG: Choose, HeroesEndOfTurnButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHK
+	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDL,
+	GuiControl,mainWindowG:Choose, HeroesEndOfTurnButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHK,
 	GuiControl,mainWindowG:, HeroesEndOfTurnButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDLCheck
+	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDLCheck,0
 	GuiControl,mainWindowG:, HeroesEndOfTurnButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHKCheck
+	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHKCheck,1
 	GuiControl,mainWindowG:, HeroesEndOfTurnButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, LeftClickButtonDDL
-	GuiControl,mainWindowG: Choose, LeftClickButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, LeftClickButtonHK
+	IniRead, tmp, settings.ini, general, LeftClickButtonDDL,
+	GuiControl,mainWindowG:Choose, LeftClickButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, LeftClickButtonHK,
 	GuiControl,mainWindowG:, LeftClickButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, LeftClickButtonDDLCheck
+	IniRead, tmp, settings.ini, general, LeftClickButtonDDLCheck,0
 	GuiControl,mainWindowG:, LeftClickButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, LeftClickButtonHKCheck
+	IniRead, tmp, settings.ini, general, LeftClickButtonHKCheck,1
 	GuiControl,mainWindowG:, LeftClickButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, RightClickButtonDDL
-	GuiControl,mainWindowG: Choose, RightClickButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, RightClickButtonHK
+	IniRead, tmp, settings.ini, general, RightClickButtonDDL,
+	GuiControl,mainWindowG:Choose, RightClickButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, RightClickButtonHK,
 	GuiControl,mainWindowG:, RightClickButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, RightClickButtonDDLCheck
+	IniRead, tmp, settings.ini, general, RightClickButtonDDLCheck,0
 	GuiControl,mainWindowG:, RightClickButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, RightClickButtonHKCheck
+	IniRead, tmp, settings.ini, general, RightClickButtonHKCheck,1
 	GuiControl,mainWindowG:, RightClickButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, SwitchNextButtonDDL
-	GuiControl,mainWindowG: Choose, SwitchNextButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchNextButtonHK
+	IniRead, tmp, settings.ini, general, SwitchNextButtonDDL,
+	GuiControl,mainWindowG:Choose, SwitchNextButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, SwitchNextButtonHK,
 	GuiControl,mainWindowG:, SwitchNextButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchNextButtonDDLCheck
+	IniRead, tmp, settings.ini, general, SwitchNextButtonDDLCheck,0
 	GuiControl,mainWindowG:, SwitchNextButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchNextButtonHKCheck
+	IniRead, tmp, settings.ini, general, SwitchNextButtonHKCheck,1
 	GuiControl,mainWindowG:, SwitchNextButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, SwitchLastButtonDDL
-	GuiControl,mainWindowG: Choose, SwitchLastButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchLastButtonHK
+	IniRead, tmp, settings.ini, general, SwitchLastButtonDDL,
+	GuiControl,mainWindowG:Choose, SwitchLastButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, SwitchLastButtonHK,
 	GuiControl,mainWindowG:, SwitchLastButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchLastButtonDDLCheck
+	IniRead, tmp, settings.ini, general, SwitchLastButtonDDLCheck,0
 	GuiControl,mainWindowG:, SwitchLastButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchLastButtonHKCheck
+	IniRead, tmp, settings.ini, general, SwitchLastButtonHKCheck,1
 	GuiControl,mainWindowG:, SwitchLastButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, StartBattleButtonDDL
-	GuiControl,mainWindowG: Choose, StartBattleButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, StartBattleButtonHK
+	IniRead, tmp, settings.ini, general, StartBattleButtonDDL,
+	GuiControl,mainWindowG:Choose, StartBattleButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, StartBattleButtonHK,
 	GuiControl,mainWindowG:, StartBattleButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, StartBattleButtonDDLCheck
+	IniRead, tmp, settings.ini, general, StartBattleButtonDDLCheck,0
 	GuiControl,mainWindowG:, StartBattleButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, StartBattleButtonHKCheck
+	IniRead, tmp, settings.ini, general, StartBattleButtonHKCheck,1
 	GuiControl,mainWindowG:, StartBattleButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, SetButton
+	IniRead, tmp, settings.ini, general, SetButton,
 	GuiControl,mainWindowG:, SetButton, %tmp%
-	IniRead, tmp, settings.ini, general, joinButtonDDL
-	GuiControl,mainWindowG: Choose, joinButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, joinButtonHK
+
+	IniRead, tmp, settings.ini, general, joinButtonDDL,
+	GuiControl,mainWindowG:Choose, joinButtonDDL, %tmp%
+	IniRead, tmp, settings.ini, general, joinButtonHK,
 	GuiControl,mainWindowG:, joinButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, joinButtonDDLCheck
+
+	IniRead, tmp, settings.ini, general, joinButtonDDLCheck,0
 	GuiControl,mainWindowG:, joinButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, joinButtonHKCheck
+	IniRead, tmp, settings.ini, general, joinButtonHKCheck,1
 	GuiControl,mainWindowG:, joinButtonHKCheck, %tmp%
 
-	IniRead, joinX, settings.ini, general, joinX
-	IniRead, joinY, settings.ini, general, joinY
-	GuiControl,mainWindowG: Text, Coords, Currently: %joinX%, %joinY%
+	IniRead, joinX, settings.ini, general, joinX,0
+	IniRead, joinY, settings.ini, general, joinY,0
+	GuiControl,mainWindowG:, Coords, Currently: %joinX%, %joinY%
 
-	IniRead, tmp, settings.ini, general, ControlKey
-	GuiControl,mainWindowG: Choose, ControlKey, %tmp%
+	IniRead, tmp, settings.ini, general, ControlKey,
+	GuiControl,mainWindowG:Choose, ControlKey, %tmp%
+
+	IniRead, tmp, settings.ini, findtextstuff, StopIfFound,0
+	GuiControl,mainWindowG:, StopIfFound, %tmp%
+	Loop, 3
+	{
+		IniRead, tmp1, settings.ini, findtextstuff, FTScan%A_Index%,%A_Space%
+		IniRead, tmp2, settings.ini, findtextstuff, FTRange%A_Index%,%A_Space%
+		IniRead, tmp3, settings.ini, findtextstuff, FTError%A_Index%,%A_Space%
+		IniRead, tmp4, settings.ini, findtextstuff, FTCheck%A_Index%,0
+		GuiControl,mainWindowG:,FTScan%A_Index%, %tmp1%
+		GuiControl,mainWindowG:,FTRange%A_Index%, %tmp2%
+		GuiControl,mainWindowG:,FTError%A_Index%, %tmp3%
+		GuiControl,mainWindowG:,FTCheck%A_Index%, %tmp4%
+	}
+	IniRead, tmp, settings.ini, findtextstuff, CoordSetupRange,%A_Space%
+	GuiControl,mainWindowG:, CoordSetupRange, %tmp%
+	IniRead, tmp, settings.ini, findtextstuff, CoordSetupError,%A_Space%
+	GuiControl,mainWindowG:, CoordSetupError, %tmp%
+	Loop, 12
+	{
+		IniRead, tmp1, settings.ini, findtextstuff, CoordSetupT%A_Index%,%A_Space%
+		GuiControl,mainWindowG:,CoordSetupT%A_Index%, %tmp1%
+	}
+
+	IniRead, tmp, settings.ini, findtextstuff, ClipBoardMode,1
+	GuiControl,mainWindowG:, ClipBoardMode, %tmp%
+	IniRead, tmp, settings.ini, findtextstuff, InsertMode,0
+	GuiControl,mainWindowG:, InsertMode, %tmp%
 
 	Loop, 8
 	{	
-		IniRead, tmp1, settings.ini, characters, EIni%A_Index%
-		IniRead, tmp2, settings.ini, characters, AIni%A_Index%
-		IniRead, tmp3, settings.ini, characters, AutoSwitchIni%A_Index%
+		IniRead, tmp1, settings.ini, characters, EIni%A_Index%,%A_Space%
+		IniRead, tmp2, settings.ini, characters, AIni%A_Index%,0
+		IniRead, tmp3, settings.ini, characters, AutoSwitchIni%A_Index%,0
 		GuiControl,mainWindowG:,EIni%A_Index%, %tmp1%
 		GuiControl,mainWindowG:,AIni%A_Index%, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni%A_Index%, %tmp3%
 	}
 	goto UpdateVars
 
-
 mainWindowGuiClose:
 	ExitFunc()
 	return
-
+  
 ; Functions
 ; =============================
 ; =============================
-
-
-; #Include <FindText>
-
- 
-
-CheckArchMonster(){
-	t1:=A_TickCount, X:=Y:=""
-	Text:="|<archmob1>*75$21.0D0ATzXnzyTzzzzzzzzzzyD7vksyy73rksyS77ltxsDzzUzzs3sy0S7kU"
-	if(ok:=FindText(1486-150000, 492-150000, 1486+150000, 492+150000, 0.2, 0.2, Text)){
-		Return True
-	}else{
-		Return False
+WM_SYSCOMMAND(wParam){
+	; window minimize button
+	If wParam = 0xF020
+	{
+		Gui, mainWindowG:Hide
 	}
+	; window close button
+	If wParam = 0xF060
+	{
+		ExitFunc()
+	}
+	Return
 }
 
-getCoords(){ ; Gets the current map coordinates by scanning the upper left screen
-	; For identification, we need to create a text library,
-	; Of course, the following text library is not strong enough,
-	; Perhaps in other computers, other screen resolutions,
-	; Other browser magnification, different fonts, need to regenerate.
-	; You can add the newly generated to the following existing text library,
-	; To enhance the generality of this text library.
-	Text:="|<->*105$10.zy0M1U60TzU"
-	Text.="|<,>*106$8.zy7VsS7VsQD3VwTzU"
-	Text.="|<0>*107$17.zzzw1zk1z01w01sC3kw71w63sA7kMDUkT1Uy31w63sA7kMDUkT1Uy31w73kS3Uw01w07w0Tw1zzzw"
-	Text.="|<1>*104$12.zzztzVw1k1U1U1X1j1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1zzU"
-	Text.="|<2>*107$17.zzzy1zk0z00w01sC3kS31w63sDzkTz1zy3zsDzkTz1zw3zkDzUzy3zs7zUTz1zw00s01k03U07zzw"
-	Text.="|<3>*108$17.zzzw1zk0z01w01sC3ky3zw7zsDzkzz1zU7z0Ty0zw0zzUzzUzz1zy31w63sC3UQ01w03s0Dw1zzzw"
-	Text.="|<4>*106$17.zzzzkTz0zy1zs3zk7z0Dy0Ts0zl1z23yA7sMDkkT3Uy71sS3k01U0300600Dz1zy3zw7zsDzkTzzw"
-	Text.="|<5>*107$17.zzzk0DU0T00y01wDzsTzUzz1zy3zw07s07k07UkDvkTzkTzUzz1zy31w73sC3Uw01w07w0Tw1zzzw"
-	Text.="|<6>*108$16.zzzz3zkDy0zk3y1zkDz1zwDzUly01s03U0C1UMD1Uw63sMDVUy63sMD1kQ700y03w0Ts7zzzU"
-	Text.="|<7>*105$17.zzz00600A00M00zz1zy7zsDzkTzVzy3zw7zkTzUzz3zw7zsDzkzz1zy3zsDzkTzUzy3zw7zkDzzzw"
-	Text.="|<8>*107$16.zzzk7y07k0T00s63UwC3kMD3UwD1Uw07s0zk3w07kMC3ksD1Uw63kMD1Uw600w03s0Tk3zzzU"
-	Text.="|<9>*107$16.zzzs7y0Dk0T01sC3UwC3kMT1Vw67kMD1Uw61UQ01k07U0TX3zwDzUzw7zUTk3z0Tw3zkzzzzU"
+HasVal(haystack, needle) {
+    for index, value in haystack
+        if (value = needle)
+            return index
+    if !(IsObject(haystack))
+        throw Exception("Bad haystack!", -1, haystack)
+}
 
-	t1:=A_TickCount
+; Checks the screen for the given pattern
+CheckForThis(textFieldString, rangeString, err){
+	if(!err or err = "")
+		err := 0.0
+	if(!textFieldString or !rangeString)
+		return False
+	txt := textFieldString
+	StringReplace , txt, txt, %A_Space%,,All
+	StringReplace , txt, txt, `",,All
+	StringReplace , txt, txt, Text:=,,All
+	ra := rangeString
+	StringReplace , ra, ra, %A_Space%,,All
+	ra := StrSplit(ra, ",")
+	if(ra.MaxIndex() != 4)
+		return False
+	return FindText(ra[1], ra[2], ra[3], ra[4], err, err, txt)
+}
+
+; Gets the current map coordinates
+getCoords(coordText, coordRange, coordError){ 
+
 	;------------------------------
-	OCR:=FindTextOCR(0, 90, 250, 130, 0.05, 0.05, Text)
+	OCR:=FindTextOCR(coordRange[1], coordRange[2], coordRange[3], coordRange[4], coordError, coordError, coordText)
 	len := StrLen(OCR)
 	testchar := SubStr(OCR, len, len)
 	IfInString, testchar, `,
 		OCR := SubStr(OCR, 1, len-1)
 	;------------------------------
-	t1:=A_TickCount-t1
-	;MsgBox, 4096, OCR, OCR Result: [%OCR%] in %t1% ms.
 	Return %OCR%
 }
 
+; Helper function for getCoords
 FindTextOCR(nX, nY, nW, nH, err1, err0, Text, Interval=20){
   OCR:="", Right_X:=nX+nW-1
   While (ok:=FindText(nX, nY, nW, nH, err1, err0, Text))
@@ -1006,10 +833,80 @@ FindTextOCR(nX, nY, nW, nH, err1, err0, Text, Interval=20){
     }
     ; If the interval exceeds the set value, add "*" to the result
     OCR.=(A_Index>1 and Left_X-nX-1>Interval ? "*":"") . Left_OCR
+    IfInString, OCR, *
+    {
+    	len := StrLen(OCR)
+    	OCR := SubStr(OCR, 1, len-2)
+    	break
+    }
     ; Update nX and nW for next search
     nX:=Left_X+Left_W-1, nW:=Right_X-nX+1
   }
   Return, OCR
+}
+
+; travel to the given coordinates
+toCoords(coords, chatKey, windowName){
+
+	StartTime := A_TickCount
+	ElapsedTime := A_TickCount - StartTime
+
+	insertChatCommand(windowName, "travel "coords, chatKey)
+	Text:="|<>*136$25.7sC3by73bbXXrVlnnUQtlkCRks7DsQ3bwC1nz70tvXUQttsQQQSSC77y73ly3Uw"
+	Loop {
+		if(ok:=FindText(1186-150000, 794-150000, 1186+150000, 794+150000, 0, 0, Text))
+		{
+			break
+		}
+		sleep 500
+		ElapsedTime := A_TickCount - StartTime
+		if(ElapsedTime > 10000)
+			return
+	}
+	if(WinExist(windowName))
+	{
+		ControlSend,, {Enter}
+		sleep, % rand(100, 200)
+	}
+}
+
+insertChatCommand(windowName, command, chatKey){
+	if(WinExist(windowName))
+	{
+		if(!WinActive(windowName))
+			WinActivate
+		ControlSend,, {%chatKey%}
+		sleep, % rand(25, 75)
+		oldCP := Clipboard
+		Clipboard := "/"command
+		SendInput, ^v
+		sleep, % rand(25, 100)
+		;Clipboard := oldCP
+		ControlSend,, {Enter}
+		sleep, % rand(25, 100)
+	}
+}
+
+fastChatCommand(windowName, command, chatKey){
+	if(WinExist(windowName))
+	{
+		if(!WinActive(windowName))
+			WinActivate
+		ControlSend,, {%chatKey%}
+		sleep, % rand(5, 25)
+		oldCP := Clipboard
+		Clipboard := "/"command
+		SendInput, ^v
+		sleep, % rand(5, 25)
+		Clipboard := oldCP
+		ControlSend,, {Enter}
+		sleep, % rand(5, 25)
+	}
+}
+
+stopAutoTravel(windowName, chatKey){
+	fastChatCommand(windowName, "sit", chatKey)
+	return
 }
 
 rand(min, max){
@@ -1025,3 +922,13 @@ ExitFunc(){
 ; Hotkeys
 ; =============================
 ; =============================
+
+F5::
+	gosub getCurrentCoords
+	perimeter := "|"
+	savedCoords = %savedCoords%%result%%perimeter%
+	Return
+;F6::
+;	Clipboard := savedCoords
+;	savedCoords := ""
+;	Return

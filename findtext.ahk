@@ -66,8 +66,20 @@
 if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   FindText_Gui("Show")
 
+OnMessage(0x112, "WM_SYSCOMMANDFT")
+WM_SYSCOMMANDFT(wParam){
+  ; window close button
+  If wParam = 0xF060
+  {
+    ExitApp
+  }
+  Return
+}
+
 FindText_Gui(cmd, arg1:="")
 {
+  #SingleInstance, force
+ 
   local
   static
   local lls, bch, cri

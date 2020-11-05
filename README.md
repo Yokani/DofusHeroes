@@ -12,7 +12,8 @@ https://www.virustotal.com/gui/file/8cd6fd0ebaad373497c60c3fa0ed32e4d4754192d29b
 Zillya, MaxSecure & Cylance are "false-positives". You can google that... it's a common problem they have with AHK binaries. If you're still unsure take a look at the code yourself.
 
 # Release
-Current version: v1.0 https://github.com/Yokani/DofusHeroes/releases/tag/v1.0
+A new release is planned soon...
+Current version: v1.1 https://github.com/Yokani/DofusHeroes/releases/tag/v1.0
 
 # HowTo:
 
@@ -61,4 +62,4 @@ With this feature you can enter a fight and make your other characters join with
 
 ArchmonsterTracker:
 
-This feature automatically tracks archmonsters you come across and logs their position in a seperate window. This way you can travel around (with pre-sentient-potion) and watch a movie or something, then check where those pesky archmonsters hide and capture them all!
+This feature does not work reliably yet in the current build.

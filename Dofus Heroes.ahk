@@ -42,17 +42,34 @@ initGUI:
 
 	Loop, 8
 	{
-		if A_Index = 1
-			Gui, mainWindowG:Add, Button, x10 y+20 gUp%A_Index%, 🡅
-		else
-			Gui, mainWindowG:Add, Button, x10 y+45 gUp%A_Index%, 🡅
-		Gui, mainWindowG:Add, Button, x+10 yp gDown%A_Index%, 🡇
-		Gui, mainWindowG:Add, Text, x+10 yp, %A_Index%.
+		Gui, mainWindowG:Add, Button, x10 y+20 h40 gUp%A_Index%, 🡅
+		Gui, mainWindowG:Add, Button, x+10 yp h40 gDown%A_Index%, 🡇
+		Gui, mainWindowG:Add, Text, x+10 yp h40 0x200, %A_Index%.
 		Gui, mainWindowG:Font, cBlack s12 norm, Cambria
-		Gui, mainWindowG:Add, Edit, vEIni%A_Index% gUpdateVars -WantReturn -VScroll limit20 x+10 yp w300 h40
+		Gui, mainWindowG:Add, Edit, vEIni%A_Index% gUpdateVars -WantReturn +hwndHEDIT -VScroll limit40 0x201 x+5 yp w250 h40
+		Edit_VCENTER(HEDIT)
 		Gui, mainWindowG:Font, cBlack s12 norm, Copperplate Gothic Bold
-		Gui, mainWindowG:Add, CheckBox, vAIni%A_Index% gUpdateVars x+10 yp, active?
-		Gui, mainWindowG:Add, CheckBox, vAutoSwitchIni%A_Index% gUpdateVars x+20 yp, autoSwitch?
+		
+		
+	}
+
+	Loop, 8
+	{
+		if(A_Index = 1){
+			Gui, mainWindowG:Add, CheckBox, vAIni%A_Index% gUpdateVars x450 y90 h40, active?
+			Gui, mainWindowG:Add, CheckBox, vAutoSwitchIni%A_Index% gUpdateVars x+10 yp h40, autoSwitch?
+		}else{
+			Gui, mainWindowG:Add, CheckBox, vAIni%A_Index% gUpdateVars x450 y+20 h40, active?
+			Gui, mainWindowG:Add, CheckBox, vAutoSwitchIni%A_Index% gUpdateVars x+10 yp h40, autoSwitch?
+		}
+	}
+
+		Loop, 8
+	{
+		if A_Index = 1
+			Gui, mainWindowG:Add, Radio, vMainCheck%A_Index% gUpdateVars x360 y90 h40, main?
+		else
+			Gui, mainWindowG:Add, Radio, vMainCheck%A_Index% gUpdateVars x360 y+20 h40, main?
 	}
 
 	Gui, mainWindowG:Tab, 2
@@ -185,9 +202,14 @@ initGUI:
 	}
 	Gui, mainWindowG:Font, cBlack s10 norm, Copperplate Gothic Bold
 
-	Gui, mainWindowG:Add, Text, x550 y60, Travel Mode
+	Gui, mainWindowG:Add, Text, x550 y40, Travel Mode
 	Gui, mainWindowG:Add, Radio, vClipBoardMode  gQuickUpdateVars x550 y+10, clipboardMode
 	Gui, mainWindowG:Add, Radio, vInsertMode gQuickUpdateVars x550 y+10, insertMode
+	Gui, mainWindowG:Add, Text, x465 y100, shortcuts
+	Gui, mainWindowG:Add, Text, x475 y+5, chat key
+	Gui, mainWindowG:Add, Hotkey, vChatKey gQuickUpdateVars x550 yp w100,
+	Gui, mainWindowG:Add, Text, x475 y+5, validate
+	Gui, mainWindowG:Add, DropDownList, vValidateKey gQuickUpdateVars x550 yp w100, Enter
 
 	Gui, mainWindowG:Color, a6a6a6, ffffff, 0
 	goto LoadSettings
@@ -320,6 +342,9 @@ UpdateVars:
 	count := 1
 	Loop, 8
 	{
+		if(MainCheck%A_Index%){
+			mainChar := EIni%A_Index%
+		}
 		if AIni%A_Index%
 		{
 			ini%count% := EIni%A_Index%
@@ -348,23 +373,27 @@ trackerStart:
 
 loadTrackGUI:
 	Gui, tracker:+AlwaysOnTop -SysMenu
-	Gui, tracker:Font, cBlack s10 norm, Lucida Sans Unicode
-	Gui, tracker:Add, Text, x20 y10 w340 h20 vtrackerActive, 
+	Gui, tracker:Font, cBlack s10 norm, Copperplate Gothic Bold
+
+	Gui, tracker:Add, Text, x20 y10 w190 h20 vtrackerActive, 
+	Gui, tracker:Add, Text, x+20 y10 w200 h20 vdestinationInfo, ClipboardMode Info
+
 	Gui, tracker:Add, Edit, x20 y+5 w257 h25 vFTCoords1 ReadOnly -VScroll -E0x200
 	Gui, tracker:Add, Edit, x20 y+1 w257 h25 vFTCoords2 ReadOnly -VScroll -E0x200
 	Gui, tracker:Add, Edit, x20 y+1 w257 h25 vFTCoords3 ReadOnly -VScroll -E0x200
+
 	Gui, tracker:Add, Button, x+10 yp-25 h25 gclearTracker, clear history
 	Gui, tracker:Add, Button, x20 y+30 h25 vTravelButton gflipTravelBreak, break travel
 	Gui, tracker:Add, DropDownList, vTravelRouteDDL gUpdateVarsTracker x+25 yp w90, Amakna|Astrub|Bonta|Brakmar|Koalak|Cania
 	GuiControl,tracker:Choose,TravelRouteDDL,Astrub
 	Gui, tracker:Add, Button, x+5 yp h25 gstartTravel, start chosen route
-	Gui,  tracker:Add, Text, x20 y+10 w280 h20 vcAutoRoute, Currently not running any routes...
-	Gui, tracker:Add, Button, x+17 yp h25 gskipTravelRoute vSkipButton, skip this
-	Gui,  tracker:Add, Text, x20 y+0 w280 h20 vpendingInfos, 
+	Gui, tracker:Add, Text, x20 y+10 w280 h25 vcAutoRoute, Currently not running any routes...
+	Gui, tracker:Add, Button, x20 y+5 w280 h25 gskipTravelRoute vSkipButton, skip current route!
+	Gui, tracker:Add, Text, x20 y+0 w280 h20 vpendingInfos, 
 	GuiWidth := 415
 	Guixpos := A_ScreenWidth - GuiWidth - 5
 	Gui, tracker:Color, a6a6a6, ffffff, 0
-	Gui, tracker:Show, y0 x%Guixpos% h200 w%GuiWidth%, DH Tracker & Traveler
+	Gui, tracker:Show, y0 x%Guixpos% h250 w%GuiWidth%, DH Tracker & Traveler
 	return
 
 clearTracker:
@@ -384,7 +413,7 @@ trackProcess:
 			return
 		}
 	}else{
-		GuiControl,tracker:,trackerActive,Not tracking stuff! (mainChar not ingame)
+		GuiControl,tracker:,trackerActive,Not tracking! (main off)
 		return
 	}
 	GuiControl,tracker:,trackerActive,Tracking stuff...
@@ -395,9 +424,8 @@ trackProcess:
 			ok := CheckForThis(FTScan%A_Index%, FTRange%A_Index%, FTError%A_Index%)
 			if(ok){
 				whatFound := ok.1.id
-				if(autoTraveling and StopIfFound){
+				if(!autoTravelBreak and autoTraveling and StopIfFound){
 					gosub flipTravelBreak
-					autoTraveling := False
 				}
 				gosub getCurrentCoords
 				if(HasVal(tracked%A_Index%, result) > 0)
@@ -451,7 +479,8 @@ startTravel:
 		randomIDX := rand(min, max)
 		currentRoute := chosenRoute[keys[randomIDX]]
 		c:=keys[randomIDX]
-		GuiControl,tracker:,cAutoRoute,Now running: %c%
+		guiMessage := "Now running: "c
+		GuiControl,tracker:,cAutoRoute, % guiMessage
 		keys.Remove(randomIDX)
 		autoTraveling  := True
 		gosub autoTravel
@@ -460,7 +489,7 @@ startTravel:
 		GuiControl,tracker:,pendingInfos, 
 		skipRouteTrigger := False
 		skipForceTrigger := False
-		GuiControl,tracker:,SkipButton, skip this
+		GuiControl,tracker:,SkipButton, skip current route!
 		if(min = max){
 			break
 		}
@@ -474,19 +503,34 @@ autoTravel:
 			gosub autoTravelBreaking
 
 		target := A_LoopField
-		toCoords(target, chatKey, mainChar)
+		cmd:="/travel " target
+
+		if(ClipBoardMode){
+			Clipboard := cmd
+			guiMSG := "new target in clipboard!"
+			GuiControl,tracker:,destinationInfo,% guiMSG
+		}else{
+			toCoords(target, ChatKey, ValidateKey, mainChar)
+		}
+
 		oldCoords := ""
 		noChangeCounter := 0
-
+		
 		Loop {
 			if(skipForceTrigger)
 				return
-			if(autoTravelBreak)
+			if(autoTravelBreak){
 				gosub autoTravelBreaking
+				continue
+			}
 			if(autoTravelBreakFinished){
 				autoTravelBreakFinished := False
 				sleep  500
-				toCoords(target, chatKey, mainChar)
+				if(ClipBoardMode){
+					Clipboard := cmd
+				}else{
+					toCoords(target, ChatKey, ValidateKey, mainChar)
+				}
 			}
 			gosub getCurrentCoords
 			if(result = oldCoords)
@@ -495,15 +539,28 @@ autoTravel:
 				noChangeCounter := 0
 			if(noChangeCounter = 10){
 				noChangeCounter := 0
-				toCoords(target, chatKey, mainChar)
+				if(ClipBoardMode){
+					Clipboard := cmd
+				}else{
+					toCoords(target, ChatKey, ValidateKey, mainChar)
+				}
 			}
 			if(result = target){
+				if(ClipBoardMode){
+					guiMSG := "wait..."
+					GuiControl,tracker:,destinationInfo,% guiMSG
+				}
 				; target reached, doing next coordinates or anything else pending...
 				if(skipRouteTrigger)
 					return
 				break
 			}
 			sleep 1000
+			if(ClipBoardMode){
+				clipCopied := InStr(Clipboard, cmd) > 0
+				guiMSG := (clipCopied ? "already in clipboard!": "wait...")
+				GuiControl,tracker:,destinationInfo,% guiMSG
+			}
 			oldCoords := result
 		}
 		sleep 1000
@@ -530,7 +587,11 @@ autoTravelBreaking:
 flipTravelBreak:
 	autoTravelBreak := !autoTravelBreak
 	if(autoTravelBreak){
-		stopAutoTravel(mainChar, chatKey)
+		stopAutoTravel(mainChar, ChatKey, ValidateKey)
+		sleep, % rand(50, 150)
+		stopAutoTravel(mainChar, ChatKey, ValidateKey)
+		sleep, % rand(50, 150)
+		stopAutoTravel(mainChar, ChatKey, ValidateKey)
 		GuiControl,tracker:,TravelButton, continue?
 	}else{
 		GuiControl,tracker:,TravelButton, break travel
@@ -605,7 +666,8 @@ SaveSettings:
 	IniWrite, % StopIfFound, settings.ini, findtextstuff, StopIfFound
 	IniWrite, % ClipBoardMode, settings.ini, findtextstuff, ClipBoardMode
 	IniWrite, % InsertMode, settings.ini, findtextstuff, InsertMode
-
+	IniWrite, % ValidateKey, settings.ini, findtextstuff, ValidateKey
+	IniWrite, % ChatKey, settings.ini, findtextstuff, ChatKey
 	Loop, 3
 	{
 		IniWrite, % FTScan%A_Index%, settings.ini, findtextstuff, FTScan%A_Index%
@@ -626,6 +688,7 @@ SaveSettings:
 	{
 		IniWrite, % EIni%A_Index%, settings.ini, characters, EIni%A_Index%
 		IniWrite, % AIni%A_Index%, settings.ini, characters, AIni%A_Index%
+		IniWrite, % MainCheck%A_Index%, settings.ini, characters, MainCheck%A_Index%
 		IniWrite, % AutoSwitchIni%A_Index%, settings.ini, characters, AutoSwitchIni%A_Index%
 	}
 	return
@@ -742,15 +805,21 @@ LoadSettings:
 	GuiControl,mainWindowG:, ClipBoardMode, %tmp%
 	IniRead, tmp, settings.ini, findtextstuff, InsertMode,0
 	GuiControl,mainWindowG:, InsertMode, %tmp%
+	IniRead, tmp, settings.ini, findtextstuff, ChatKey,
+	GuiControl,mainWindowG:, ChatKey, %tmp%
+	IniRead, tmp, settings.ini, findtextstuff, ValidateKey,Enter
+	GuiControl,mainWindowG:Choose, ValidateKey, %tmp%
 
 	Loop, 8
 	{	
 		IniRead, tmp1, settings.ini, characters, EIni%A_Index%,%A_Space%
 		IniRead, tmp2, settings.ini, characters, AIni%A_Index%,0
 		IniRead, tmp3, settings.ini, characters, AutoSwitchIni%A_Index%,0
+		IniRead, tmp4, settings.ini, characters, MainCheck%A_Index%,0
 		GuiControl,mainWindowG:,EIni%A_Index%, %tmp1%
 		GuiControl,mainWindowG:,AIni%A_Index%, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni%A_Index%, %tmp3%
+		GuiControl,mainWindowG:,MainCheck%A_Index%, %tmp4%
 	}
 	goto UpdateVars
 
@@ -814,6 +883,23 @@ getCoords(coordText, coordRange, coordError){
 	Return %OCR%
 }
 
+; Helper function for vertical aligned text
+Edit_VCENTER(hWnd){
+    static EM_GETRECT := 0x00B2    ; <- msdn.microsoft.com/en-us/library/bb761596(v=vs.85).aspx
+    static EM_SETRECT := 0x00B3    ; <- msdn.microsoft.com/en-us/library/bb761657(v=vs.85).aspx
+    VarSetCapacity(RC, 16, 0)
+    DllCall("user32\GetClientRect", "ptr", hWnd, "ptr", &RC)
+    CLHeight := NumGet(RC, 12, "int")
+    DllCall("user32\SendMessage", "ptr", hWnd, "uint", EM_GETRECT, "ptr", 0, "ptr", &RC, "ptr")
+    RCHeight := NumGet(RC, 12, "int") - NumGet(RC, 4, "int")
+    DY := (CLHeight - RCHeight) + 5
+    NumPut(NumGet(RC, 4, "int") + DY, RC, 4, "int")
+    NumPut(NumGet(RC, 12, "int") + DY, RC, 12, "int")
+    DllCall("user32\SendMessage", "ptr", hWnd, "uint", EM_SETRECT, "ptr", 0, "ptr", &RC, "ptr")
+    return True
+}
+
+
 ; Helper function for getCoords
 FindTextOCR(nX, nY, nW, nH, err1, err0, Text, Interval=20){
   OCR:="", Right_X:=nX+nW-1
@@ -846,66 +932,57 @@ FindTextOCR(nX, nY, nW, nH, err1, err0, Text, Interval=20){
 }
 
 ; travel to the given coordinates
-toCoords(coords, chatKey, windowName){
-
-	StartTime := A_TickCount
-	ElapsedTime := A_TickCount - StartTime
-
-	insertChatCommand(windowName, "travel "coords, chatKey)
-	Text:="|<>*136$25.7sC3by73bbXXrVlnnUQtlkCRks7DsQ3bwC1nz70tvXUQttsQQQSSC77y73ly3Uw"
-	Loop {
-		if(ok:=FindText(1186-150000, 794-150000, 1186+150000, 794+150000, 0, 0, Text))
-		{
-			break
-		}
-		sleep 500
-		ElapsedTime := A_TickCount - StartTime
-		if(ElapsedTime > 10000)
-			return
-	}
+toCoords(coords, chatKey, validateKey, windowName){
+	insertChatCommand(windowName, "travel "coords, chatKey, validateKey)
+	sleep, % rand(1000, 2000)
 	if(WinExist(windowName))
 	{
-		ControlSend,, {Enter}
+		ControlSend,, {%validateKey%}
 		sleep, % rand(100, 200)
 	}
 }
 
-insertChatCommand(windowName, command, chatKey){
+insertChatCommand(windowName, command, chatKey, validateKey){
 	if(WinExist(windowName))
 	{
 		if(!WinActive(windowName))
 			WinActivate
 		ControlSend,, {%chatKey%}
 		sleep, % rand(25, 75)
+		SendInput, ^a
+		sleep, % rand(5, 25)
+		ControlSend,, {Return}
 		oldCP := Clipboard
 		Clipboard := "/"command
 		SendInput, ^v
 		sleep, % rand(25, 100)
 		;Clipboard := oldCP
-		ControlSend,, {Enter}
+		ControlSend,, {%validateKey%}
 		sleep, % rand(25, 100)
 	}
 }
 
-fastChatCommand(windowName, command, chatKey){
+fastChatCommand(windowName, command, chatKey, validateKey){
 	if(WinExist(windowName))
 	{
 		if(!WinActive(windowName))
 			WinActivate
 		ControlSend,, {%chatKey%}
 		sleep, % rand(5, 25)
+		SendInput, ^a
+		sleep, % rand(5, 25)
 		oldCP := Clipboard
 		Clipboard := "/"command
 		SendInput, ^v
 		sleep, % rand(5, 25)
 		Clipboard := oldCP
-		ControlSend,, {Enter}
+		ControlSend,, {%validateKey%}
 		sleep, % rand(5, 25)
 	}
 }
 
-stopAutoTravel(windowName, chatKey){
-	fastChatCommand(windowName, "sit", chatKey)
+stopAutoTravel(windowName, chatKey, validateKey){
+	fastChatCommand(windowName, "sit", chatKey, validateKey)
 	return
 }
 

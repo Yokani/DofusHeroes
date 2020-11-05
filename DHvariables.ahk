@@ -4,8 +4,7 @@ mainWindowTitle := "Dofus Heroes"
 accounts := 0
 ini1 := "", ini2 := "", ini3 := "", ini4 := "", ini5 := "", ini6 := "", ini7 := "", ini8 := ""
 iniAutoSwitch1 := 0, iniAutoSwitch2 := 0, iniAutoSwitch3 := 0, iniAutoSwitch4 := 0, iniAutoSwitch5 := 0, iniAutoSwitch6 := 0, iniAutoSwitch7 := 0, iniAutoSwitch8 := 0
-mainChar := "Paracelsius"
-chatKey := "End"
+mainChar := ""
 tmp := 0
 joinX = 0
 joinY = 0
@@ -18,6 +17,7 @@ savedCoords := ""
 aMobAmount := 0
 currentRoute := ""
 chosenRoute := ""
+clipCopied := False
 autoTravelBreak := False
 autoTravelBreakFinished := False
 autoTraveling  := False

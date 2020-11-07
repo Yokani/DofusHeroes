@@ -87,8 +87,11 @@ Let's take this guy.
 <a href="https://ibb.co/4P1bWFz"><img src="https://i.ibb.co/wMcnydV/screen7.png" alt="screen7" border="0"></a>
 
 This will open up.
+
 3) adjust the width and height settings at the top and then hit "Apply" - the window will reopen (i recommend 35x35, so you have a nice square to work with. If it's bigger than what you want to capture, no problem, if smaller you should make it bigger)
+
 4) Next hit "Capture", a rectangle with your defined size will appear around your mouse. Move it, so it frames the thing you want to track, for me it's the archmonster flame icon. If you're content make 2 right clicks to continue.
+
 5) A new window opens up to process the captured image for optimized recognition. This part is very important and will require some trial and error until you reliably recognize the pattern you're searching for!
 For me it looks like this:
 

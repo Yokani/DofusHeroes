@@ -78,6 +78,7 @@ For example, you're traveling around via the travel feature, but would like to k
 It's also possible to make the character stop while traveling if he/she spots the thing you're looking for.
 
 Alright, let's get this to work:
+This setup will only work as long as you're not changing the dofus window resolution and as long as it's not running in full screen!
 
 1) First we need to find the pattern we're looking for, let's take an archmonster as example (because that's how i'm using it).
 
@@ -106,7 +107,7 @@ For me it looks like this:
 
 This is fine for me
 
-5.2) apply a color filter. This step is important, because shown colors are often very different and partly transparent etc. everything just messes with proper recogintion, if not properly preprocessed. The ones i useally use are Gray and GrayDiff. Simply press the Gray2Two button and the filter will be applied. It finds a certain value for the field on the left, which can be adjusted by you if the filter was not applied sucessfully. The value corresponds to how harsh the filter is applied (lower values = more harsh).
+5.2) apply a color filter. This step is important, because shown colors are often very different and partly transparent - everything just messes with proper recognition, if not properly preprocessed. The ones i useally use are Gray and GrayDiff. Simply press the Gray2Two button and the filter will be applied. It finds a certain value for the field on the left, which can be adjusted by you if the filter was not applied sucessfully. The value corresponds to how harsh the filter is applied (lower values = more harsh).
 
 <a href="https://ibb.co/St5y04F"><img src="https://i.ibb.co/5rG4vgb/screen10.png" alt="screen10" border="0"></a>
 

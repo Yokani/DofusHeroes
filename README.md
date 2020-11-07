@@ -17,6 +17,7 @@ Zillya, MaxSecure & Cylance are "false-positives". You can google that... it's a
 
 # Release
 Current version: v1.2 https://github.com/Yokani/DofusHeroes/releases/
+
 Download directly here: https://github.com/Yokani/DofusHeroes/releases/download/v1.2/dofusheroes.rar
 
 # HowTo:
@@ -64,7 +65,7 @@ FightJoiner:
 
 With this feature you can enter a fight and make your other characters join without needing to switch to their windows. Follow the instructions in the GUI to set it up correctly.
 
-TrackNTraveler:
+# TrackNTraveler:
 
 For the auto-traveling features you need to have a pre-sentient mount! (feed it a pre-sentient potion from the shop/market)
 This feature requires some advanced setup, which i'll try to explain properly via the following guide.

@@ -140,7 +140,7 @@ Capture each number ranging from 0 to 9, check if it is recognized, do the same 
 You can test the coordinate tracking with the "test it!" button. If it works it should give you the coordinates of the current map you're on.
 Mind that i'm using the feature where adjacent maps aren't shown and it's instead blacked out. This makes my coordinate recognition very reliable. It might not be the same for you if there is a ever changing background behind them!
 
-7) Finally... hit "Start or Stop TrackNTraveler" to open op the tracker. A New window will appear, which always remains on top of everything.
+7) Finally... hit "Start or Stop TrackNTraveler" to open up the tracker. A New window will appear, which always remains on top of everything.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/vLkXzLP/screen5.png" alt="screen5" border="0"></a>
 

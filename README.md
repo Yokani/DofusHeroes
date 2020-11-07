@@ -68,6 +68,7 @@ With this feature you can enter a fight and make your other characters join with
 # TrackNTraveler:
 
 For the auto-traveling features you need to have a pre-sentient mount! (feed it a pre-sentient potion from the shop/market)
+
 This feature requires some advanced setup, which i'll try to explain properly via the following guide.
 
 <a href="https://ibb.co/xCM3gw5"><img src="https://i.ibb.co/mDHSydz/screen4.png" alt="screen4" border="0"></a>
@@ -77,6 +78,7 @@ For example, you're traveling around via the travel feature, but would like to k
 It's also possible to make the character stop while traveling if he/she spots the thing you're looking for.
 
 Alright, let's get this to work:
+
 1) First we need to find the pattern we're looking for, let's take an archmonster as example (because that's how i'm using it).
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/JdRRcwb/screen6.png" alt="screen6" border="0"></a>

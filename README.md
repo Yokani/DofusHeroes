@@ -115,7 +115,7 @@ Mine looks like this now. See the little errors on the bottom left side or aroun
 
 If the result is not pleasing you, hit "Reset" to start from the raw image capture again.
 Hit "Close" to return to the former UI and make a new capture
-If you're fine what you captured and processed, continue
+If you're fine with what you captured and processed, continue
 
 5.3) Enter a tag in the comment section, which identifies what you're going to look for. For me it's simply "archmob". After that press "OK". Your inputs will now be taken to the main window. In the top you can now see the pattern you're going to look out for. Below is a small testing script so we can try if it actually works.
 

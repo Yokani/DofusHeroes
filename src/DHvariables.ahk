@@ -1,6 +1,8 @@
 ﻿; Global Variables
 ; ==============================================================================================================================================================================
 mainWindowTitle := "Dofus Heroes"
+global loadUpFinished := False
+inilocation := "utils/settings.ini"
 accounts := 0
 ini1 := "", ini2 := "", ini3 := "", ini4 := "", ini5 := "", ini6 := "", ini7 := "", ini8 := ""
 iniAutoSwitch1 := 0, iniAutoSwitch2 := 0, iniAutoSwitch3 := 0, iniAutoSwitch4 := 0, iniAutoSwitch5 := 0, iniAutoSwitch6 := 0, iniAutoSwitch7 := 0, iniAutoSwitch8 := 0
@@ -89,7 +91,7 @@ pandalaFR := ""
 
 allAstrubRoutes := {"astrubForestFR":astrubForestFR,"astrubCemeteryFR":astrubCemeteryFR,"astrubMeadowFR":astrubMeadowFR,"astrubCityFR":astrubCityFR,"astrubRockyInletFR":astrubRockyInletFR,"astrubFieldsFR":astrubFieldsFR,"astrubTainelaFR":astrubTainelaFR}
 allAmaknaSufokiaRoutes := {"cracklerMountainFR":cracklerMountainFR,"amaknaVillageFR":amaknaVillageFR,"madrestamHarbourkawaiiRiverFR":madrestamHarbourkawaiiRiverFR,"lowCracklerMountainFR":lowCracklerMountainFR,"bworkGoblinVillageFR":bworkGoblinVillageFR,"edgeOfEvilForestFR":edgeOfEvilForestFR,"amaknaForestFR":amaknaForestFR,"banditTerritoryAmaknaCemeteryFR":banditTerritoryAmaknaCemeteryFR,"scaraleafPlainPorcoTerritoryFR":scaraleafPlainPorcoTerritoryFR,"jellyPeninsulaFR":jellyPeninsulaFR,"amaknaMainAreaFR":amaknaMainAreaFR,"sufokianShorelineFR":sufokianShorelineFR,"sufokiaFR":sufokiaFR,"dreggonAreaFR":dreggonAreaFR}
-allCaniaMainRoutes := {"caniaLakeFR":caniaLakeFR,"lousyPigPlainFR":lousyPigPlainFR,"treechnidForestEdgeFR":treechnidForestEdgeFR,"treechnidForestInnerFR":treechnidForestInnerFR}
+allCaniaMainRoutes := {"caniaLakeFR":caniaLakeFR,"lousyPigPlainFR":lousyPigPlainFR,"treechnidForestEdgeFR":treechnidForestEdgeFR,"treechnidForestInnerFR":treechnidForestInnerFR,"caniaMassifFR":caniaMassifFR,"caniaBayFR":caniaBayFR,"rockyRoadsFR":rockyRoadsFR}
 allKoalakRoutes := {"dragoturkeyTerritoryFR":dragoturkeyTerritoryFR,"enchantedLakesFR":enchantedLakesFR,"nauseatingSwampsFR":nauseatingSwampsFR,"kaliptusForestFR":kaliptusForestFR}
 allBontaRoutes := {"bontaCityWallsFR":bontaCityWallsFR,"bontaFR":bontaFR,"caniaFieldsFR":caniaFieldsFR,"rockyPlainsFR":rockyPlainsFR,"eltnegWoodFR":eltnegWoodFR,"crowDomainFR":crowDomainFR,"heroesCemeteryFR":heroesCemeteryFR,"stonetuskDesertFR":stonetuskDesertFR}
 allBrakmarRoutes := {"brakmarCityWallsFR":brakmarCityWallsFR,"brakmarFR":brakmarFR,"cemeteryOfTheTorturedFR":cemeteryOfTheTorturedFR,"desolationOfSidimoteFR":desolationOfSidimoteFR,"howlingHeightsFR":howlingHeightsFR}

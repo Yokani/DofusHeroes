@@ -1,4 +1,13 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+﻿; ==============================================================================================================================================================================
+;  Dofus Heroes - a Dofus utility tool
+;  https://github.com/Yokani/DofusHeroes
+;
+;  Author  : Yokani
+;  Version : 1.2
+;  Date    : 2020-11-07
+; ==============================================================================================================================================================================
+
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
@@ -22,8 +31,8 @@ DButton:
 	GuiControl,mainWindowG:Focus, DButt
 	return
 
-DButtonS:
-	GuiControl,amobTracker:Focus, DButtS
+DButtonT:
+	GuiControl,tracker:Focus, DButtT
 	return
 
 loadGUI:
@@ -49,10 +58,7 @@ initGUI:
 		Gui, mainWindowG:Add, Edit, vEIni%A_Index% gUpdateVars -WantReturn +hwndHEDIT -VScroll limit40 0x201 x+5 yp w250 h40
 		Edit_VCENTER(HEDIT)
 		Gui, mainWindowG:Font, cBlack s12 norm, Copperplate Gothic Bold
-		
-		
 	}
-
 	Loop, 8
 	{
 		if(A_Index = 1){
@@ -63,8 +69,7 @@ initGUI:
 			Gui, mainWindowG:Add, CheckBox, vAutoSwitchIni%A_Index% gUpdateVars x+10 yp h40, autoSwitch?
 		}
 	}
-
-		Loop, 8
+	Loop, 8
 	{
 		if A_Index = 1
 			Gui, mainWindowG:Add, Radio, vMainCheck%A_Index% gUpdateVars x360 y90 h40, main?
@@ -212,15 +217,14 @@ initGUI:
 	Gui, mainWindowG:Add, DropDownList, vValidateKey gQuickUpdateVars x550 yp w100, Enter
 
 	Gui, mainWindowG:Color, a6a6a6, ffffff, 0
-	goto LoadSettings
+	return
 
 startFindTextGUI:
-	Run, %A_AHKPath% "findtext.ahk"
+	Run, %A_AHKPath% "src/findtext.ahk"
 	return
 
 UpdateVarsTracker:
 	Gui, tracker:Submit, NoHide
-
 	if(TravelRouteDDL = "Astrub")
 		chosenRoute := allAstrubRoutes
 	if(TravelRouteDDL = "Amakna")
@@ -235,61 +239,7 @@ UpdateVarsTracker:
 		chosenRoute := allKoalakRoutes
 	return
 
-QuickUpdateVars:
-	Gui, mainWindowG:Submit, NoHide
-	return
-
-UpdateVars:
-	if HeroesEndOfTurnButtonDDL
-		Hotkey % HeroesEndOfTurnButtonDDL, HeroesEndOfTurn, off UseErrorLevel
-	if HeroesEndOfTurnButtonHK
-		Hotkey % HeroesEndOfTurnButtonHK, HeroesEndOfTurn, off UseErrorLevel
-	if LeftClickButtonDDL
-		Hotkey % LeftClickButtonDDL, ClientLeftClick, off UseErrorLevel
-	if LeftClickButtonHK
-		Hotkey % LeftClickButtonHK, ClientLeftClick, off UseErrorLevel
-	if RightClickButtonDDL
-		Hotkey % RightClickButtonDDL, ClientRightClick, off UseErrorLevel
-	if RightClickButtonHK
-		Hotkey % RightClickButtonHK, ClientRightClick, off UseErrorLevel
-	if SwitchNextButtonDDL
-		Hotkey % SwitchNextButtonDDL, switchNext, off UseErrorLevel
-	if SwitchNextButtonHK
-		Hotkey % SwitchNextButtonHK, switchNext, off UseErrorLevel
-	if SwitchLastButtonDDL
-		Hotkey % SwitchLastButtonDDL, switchLast, off UseErrorLevel
-	if SwitchLastButtonHK
-		Hotkey % SwitchLastButtonHK, switchLast, off UseErrorLevel
-	if StartBattleButtonDDL
-		Hotkey % StartBattleButtonDDL, startBattle, off UseErrorLevel
-	if StartBattleButtonHK
-		Hotkey % StartBattleButtonHK, startBattle, off UseErrorLevel
-	if SetButton
-		Hotkey % SetButton, SetJoinMsgCoords, off UseErrorLevel
-	if JoinButtonDDL
-		Hotkey % JoinButtonDDL, FightJoin, off UseErrorLevel
-	if JoinButtonHK
-		Hotkey % JoinButtonHK, FightJoin, off UseErrorLevel
-	
-	if ControlKey
-	{
-		if ControlKey = Shift
-			key = +
-		if ControlKey = Ctrl
-			key = ^
-		if ControlKey = Alt
-			key = !
-		Hotkey, %key%1, showIni1, off UseErrorLevel
-		Hotkey, %key%2, showIni2, off UseErrorLevel
-		Hotkey, %key%3, showIni3, off UseErrorLevel
-		Hotkey, %key%4, showIni4, off UseErrorLevel
-		Hotkey, %key%5, showIni5, off UseErrorLevel
-		Hotkey, %key%6, showIni6, off UseErrorLevel
-		Hotkey, %key%7, showIni7, off UseErrorLevel
-		Hotkey, %key%8, showIni8, off UseErrorLevel
-	}
-	Gui, mainWindowG:Submit, NoHide
-
+activateHotkeys:
 	if HeroesEndOfTurnButtonDDL and HeroesEndOfTurnButtonDDLCheck
 		Hotkey % HeroesEndOfTurnButtonDDL, HeroesEndOfTurn, on
 	if HeroesEndOfTurnButtonHK and HeroesEndOfTurnButtonHKCheck
@@ -338,8 +288,68 @@ UpdateVars:
 		Hotkey, %key%7, showIni7, on
 		Hotkey, %key%8, showIni8, on
 	}
+	return
 
-	count := 1
+deactivateHotkeys:
+	if HeroesEndOfTurnButtonDDL
+		Hotkey % HeroesEndOfTurnButtonDDL, HeroesEndOfTurn, off UseErrorLevel
+	if HeroesEndOfTurnButtonHK
+		Hotkey % HeroesEndOfTurnButtonHK, HeroesEndOfTurn, off UseErrorLevel
+	if LeftClickButtonDDL
+		Hotkey % LeftClickButtonDDL, ClientLeftClick, off UseErrorLevel
+	if LeftClickButtonHK
+		Hotkey % LeftClickButtonHK, ClientLeftClick, off UseErrorLevel
+	if RightClickButtonDDL
+		Hotkey % RightClickButtonDDL, ClientRightClick, off UseErrorLevel
+	if RightClickButtonHK
+		Hotkey % RightClickButtonHK, ClientRightClick, off UseErrorLevel
+	if SwitchNextButtonDDL
+		Hotkey % SwitchNextButtonDDL, switchNext, off UseErrorLevel
+	if SwitchNextButtonHK
+		Hotkey % SwitchNextButtonHK, switchNext, off UseErrorLevel
+	if SwitchLastButtonDDL
+		Hotkey % SwitchLastButtonDDL, switchLast, off UseErrorLevel
+	if SwitchLastButtonHK
+		Hotkey % SwitchLastButtonHK, switchLast, off UseErrorLevel
+	if StartBattleButtonDDL
+		Hotkey % StartBattleButtonDDL, startBattle, off UseErrorLevel
+	if StartBattleButtonHK
+		Hotkey % StartBattleButtonHK, startBattle, off UseErrorLevel
+	if SetButton
+		Hotkey % SetButton, SetJoinMsgCoords, off UseErrorLevel
+	if JoinButtonDDL
+		Hotkey % JoinButtonDDL, FightJoin, off UseErrorLevel
+	if JoinButtonHK
+		Hotkey % JoinButtonHK, FightJoin, off UseErrorLevel
+	return
+	if ControlKey
+	{
+		if ControlKey = Shift
+			key = +
+		if ControlKey = Ctrl
+			key = ^
+		if ControlKey = Alt
+			key = !
+		Hotkey, %key%1, showIni1, off UseErrorLevel
+		Hotkey, %key%2, showIni2, off UseErrorLevel
+		Hotkey, %key%3, showIni3, off UseErrorLevel
+		Hotkey, %key%4, showIni4, off UseErrorLevel
+		Hotkey, %key%5, showIni5, off UseErrorLevel
+		Hotkey, %key%6, showIni6, off UseErrorLevel
+		Hotkey, %key%7, showIni7, off UseErrorLevel
+		Hotkey, %key%8, showIni8, off UseErrorLevel
+	}
+	return
+
+QuickUpdateVars:
+	Gui, mainWindowG:Submit, NoHide
+	return
+
+UpdateVars:
+	gosub deactivateHotkeys
+	Gui, mainWindowG:Submit, NoHide
+	gosub activateHotkeys
+	c := 1
 	Loop, 8
 	{
 		if(MainCheck%A_Index%){
@@ -347,13 +357,12 @@ UpdateVars:
 		}
 		if AIni%A_Index%
 		{
-			ini%count% := EIni%A_Index%
-			iniAutoSwitch%count% := AutoSwitchIni%A_Index%
-			count++
+			ini%c% := EIni%A_Index%
+			iniAutoSwitch%c% := AutoSwitchIni%A_Index%
+			c++
 		}
 	}
-	accounts = %count%
-	accounts--
+	accounts := c - 1
 	return
 
 trackerStart:
@@ -387,9 +396,10 @@ loadTrackGUI:
 	Gui, tracker:Add, DropDownList, vTravelRouteDDL gUpdateVarsTracker x+25 yp w90, Amakna|Astrub|Bonta|Brakmar|Koalak|Cania
 	GuiControl,tracker:Choose,TravelRouteDDL,Astrub
 	Gui, tracker:Add, Button, x+5 yp h25 gstartTravel, start chosen route
-	Gui, tracker:Add, Text, x20 y+10 w280 h25 vcAutoRoute, Currently not running any routes...
+	Gui, tracker:Add, Text, x20 y+10 w280 h40 vcAutoRoute, Currently not running any routes...
 	Gui, tracker:Add, Button, x20 y+5 w280 h25 gskipTravelRoute vSkipButton, skip current route!
 	Gui, tracker:Add, Text, x20 y+0 w280 h20 vpendingInfos, 
+	Gui, tracker:Add, Button, x0 w0 h0 default vDButtT gDButtonT
 	GuiWidth := 415
 	Guixpos := A_ScreenWidth - GuiWidth - 5
 	Gui, tracker:Color, a6a6a6, ffffff, 0
@@ -466,6 +476,7 @@ testCurrentCoords:
 	MsgBox, Are your current coordinates [%result%] ?
 	return
 
+; travel the chosen route
 startTravel:
 	keys := []
 	for key, value in chosenRoute
@@ -479,7 +490,7 @@ startTravel:
 		randomIDX := rand(min, max)
 		currentRoute := chosenRoute[keys[randomIDX]]
 		c:=keys[randomIDX]
-		guiMessage := "Now running: "c
+		guiMessage := "Now running:`n"c
 		GuiControl,tracker:,cAutoRoute, % guiMessage
 		keys.Remove(randomIDX)
 		autoTraveling  := True
@@ -496,6 +507,7 @@ startTravel:
 	}
 	return
 
+; travel to the given coordinates
 autoTravel:
 	Loop, Parse, currentRoute, |
 	{
@@ -523,16 +535,20 @@ autoTravel:
 				gosub autoTravelBreaking
 				continue
 			}
+			gosub getCurrentCoords
 			if(autoTravelBreakFinished){
 				autoTravelBreakFinished := False
 				sleep  500
+				if(result = target){
+					break
+				}
 				if(ClipBoardMode){
 					Clipboard := cmd
 				}else{
 					toCoords(target, ChatKey, ValidateKey, mainChar)
 				}
 			}
-			gosub getCurrentCoords
+			
 			if(result = oldCoords)
 				noChangeCounter := noChangeCounter + 1
 			else
@@ -567,6 +583,7 @@ autoTravel:
 	}
 	return
 
+; skip/force skip the currently running route
 skipTravelRoute:
 	if(skipRouteTrigger)
 		skipForceTrigger := True
@@ -575,6 +592,7 @@ skipTravelRoute:
 	skipRouteTrigger := True
 	return
 
+; pause auto travel
 autoTravelBreaking:
 	Loop{
 		if(!autoTravelBreak)
@@ -584,6 +602,7 @@ autoTravelBreaking:
 	autoTravelBreakFinished := True
 	return
 
+; trigger auto travel pause or resume travel
 flipTravelBreak:
 	autoTravelBreak := !autoTravelBreak
 	if(autoTravelBreak){
@@ -598,14 +617,16 @@ flipTravelBreak:
 	}
 	Return
 
+; hotkey tab help
 RunHelp:
 	hkexplanation = Hotkey Legend:`n^ : Ctrl/Strg`n! : Alt`n+ : Shift`nXButton1/2 : special mouse buttons, useally on the left side`nLButton/RButton/MButton : Left, right and middle mouse buttons`nFor example !LButton = Alt + Left Mouse Button`n`nBe careful when using special keys like circumflex, caret, insert, delete, etc. - they might not work!`n`nFor a detailed description of features visit`nhttps://github.com/Yokani/DofusHeroes
 	MsgBox % hkexplanation
 	Return
 
+; initialization stuff
 scriptInit:
 	Menu, Tray, NoStandard
-	Menu, Tray, Icon, dhicon.ico
+	Menu, Tray, Icon, utils/dhicon.ico
 	Menu, Tray, Add, Settings, loadGUI
 	Menu, Tray, Add, Close, mainWindowGuiClose
 	Menu, Tray, Default, Settings
@@ -616,206 +637,209 @@ scriptInit:
 	gosub initGUI
 	gosub loadGUI
 	gosub LoadSettings
+	global loadUpFinished := True
 	return
 
+; save settings as ini file
 SaveSettings:
-	IniWrite, % DofusEndOfTurnButtonDDL, settings.ini, general, DofusEndOfTurnButtonDDL
-	IniWrite, % DofusEndOfTurnButtonHK, settings.ini, general, DofusEndOfTurnButtonHK
-	IniWrite, % DofusEndOfTurnButtonDDLCheck, settings.ini, general, DofusEndOfTurnButtonDDLCheck
-	IniWrite, % DofusEndOfTurnButtonHKCheck, settings.ini, general, DofusEndOfTurnButtonHKCheck
+	IniWrite, % DofusEndOfTurnButtonDDL, %inilocation%, general, DofusEndOfTurnButtonDDL
+	IniWrite, % DofusEndOfTurnButtonHK, %inilocation%, general, DofusEndOfTurnButtonHK
+	IniWrite, % DofusEndOfTurnButtonDDLCheck, %inilocation%, general, DofusEndOfTurnButtonDDLCheck
+	IniWrite, % DofusEndOfTurnButtonHKCheck, %inilocation%, general, DofusEndOfTurnButtonHKCheck
 
-	IniWrite, % HeroesEndOfTurnButtonDDL, settings.ini, general, HeroesEndOfTurnButtonDDL
-	IniWrite, % HeroesEndOfTurnButtonHK, settings.ini, general, HeroesEndOfTurnButtonHK
-	IniWrite, % HeroesEndOfTurnButtonDDLCheck, settings.ini, general, HeroesEndOfTurnButtonDDLCheck
-	IniWrite, % HeroesEndOfTurnButtonHKCheck, settings.ini, general, HeroesEndOfTurnButtonHKCheck
+	IniWrite, % HeroesEndOfTurnButtonDDL, %inilocation%, general, HeroesEndOfTurnButtonDDL
+	IniWrite, % HeroesEndOfTurnButtonHK, %inilocation%, general, HeroesEndOfTurnButtonHK
+	IniWrite, % HeroesEndOfTurnButtonDDLCheck, %inilocation%, general, HeroesEndOfTurnButtonDDLCheck
+	IniWrite, % HeroesEndOfTurnButtonHKCheck, %inilocation%, general, HeroesEndOfTurnButtonHKCheck
 
-	IniWrite, % LeftClickButtonDDL, settings.ini, general, LeftClickButtonDDL
-	IniWrite, % LeftClickButtonHK, settings.ini, general, LeftClickButtonHK
-	IniWrite, % LeftClickButtonDDLCheck, settings.ini, general, LeftClickButtonDDLCheck
-	IniWrite, % LeftClickButtonHKCheck, settings.ini, general, LeftClickButtonHKCheck
+	IniWrite, % LeftClickButtonDDL, %inilocation%, general, LeftClickButtonDDL
+	IniWrite, % LeftClickButtonHK, %inilocation%, general, LeftClickButtonHK
+	IniWrite, % LeftClickButtonDDLCheck, %inilocation%, general, LeftClickButtonDDLCheck
+	IniWrite, % LeftClickButtonHKCheck, %inilocation%, general, LeftClickButtonHKCheck
 
-	IniWrite, % RightClickButtonDDL, settings.ini, general, RightClickButtonDDL
-	IniWrite, % RightClickButtonHK, settings.ini, general, RightClickButtonHK
-	IniWrite, % RightClickButtonDDLCheck, settings.ini, general, RightClickButtonDDLCheck
-	IniWrite, % RightClickButtonHKCheck, settings.ini, general, RightClickButtonHKCheck
+	IniWrite, % RightClickButtonDDL, %inilocation%, general, RightClickButtonDDL
+	IniWrite, % RightClickButtonHK, %inilocation%, general, RightClickButtonHK
+	IniWrite, % RightClickButtonDDLCheck, %inilocation%, general, RightClickButtonDDLCheck
+	IniWrite, % RightClickButtonHKCheck, %inilocation%, general, RightClickButtonHKCheck
 
-	IniWrite, % SwitchNextButtonDDL, settings.ini, general, SwitchNextButtonDDL
-	IniWrite, % SwitchNextButtonHK, settings.ini, general, SwitchNextButtonHK
-	IniWrite, % SwitchNextButtonDDLCheck, settings.ini, general, SwitchNextButtonDDLCheck
-	IniWrite, % SwitchNextButtonHKCheck, settings.ini, general, SwitchNextButtonHKCheck
+	IniWrite, % SwitchNextButtonDDL, %inilocation%, general, SwitchNextButtonDDL
+	IniWrite, % SwitchNextButtonHK, %inilocation%, general, SwitchNextButtonHK
+	IniWrite, % SwitchNextButtonDDLCheck, %inilocation%, general, SwitchNextButtonDDLCheck
+	IniWrite, % SwitchNextButtonHKCheck, %inilocation%, general, SwitchNextButtonHKCheck
 
-	IniWrite, % SwitchLastButtonDDL, settings.ini, general, SwitchLastButtonDDL
-	IniWrite, % SwitchLastButtonHK, settings.ini, general, SwitchLastButtonHK
-	IniWrite, % SwitchLastButtonDDLCheck, settings.ini, general, SwitchLastButtonDDLCheck
-	IniWrite, % SwitchLastButtonHKCheck, settings.ini, general, SwitchLastButtonHKCheck
+	IniWrite, % SwitchLastButtonDDL, %inilocation%, general, SwitchLastButtonDDL
+	IniWrite, % SwitchLastButtonHK, %inilocation%, general, SwitchLastButtonHK
+	IniWrite, % SwitchLastButtonDDLCheck, %inilocation%, general, SwitchLastButtonDDLCheck
+	IniWrite, % SwitchLastButtonHKCheck, %inilocation%, general, SwitchLastButtonHKCheck
 
-	IniWrite, % StartBattleButtonDDL, settings.ini, general, StartBattleButtonDDL
-	IniWrite, % StartBattleButtonHK, settings.ini, general, StartBattleButtonHK
-	IniWrite, % StartBattleButtonDDLCheck, settings.ini, general, StartBattleButtonDDLCheck
-	IniWrite, % StartBattleButtonHKCheck, settings.ini, general, StartBattleButtonHKCheck
+	IniWrite, % StartBattleButtonDDL, %inilocation%, general, StartBattleButtonDDL
+	IniWrite, % StartBattleButtonHK, %inilocation%, general, StartBattleButtonHK
+	IniWrite, % StartBattleButtonDDLCheck, %inilocation%, general, StartBattleButtonDDLCheck
+	IniWrite, % StartBattleButtonHKCheck, %inilocation%, general, StartBattleButtonHKCheck
 
-	IniWrite, % SetButton, settings.ini, general, SetButton
-	IniWrite, % JoinButtonDDL, settings.ini, general, JoinButtonDDL
-	IniWrite, % JoinButtonHK, settings.ini, general, JoinButtonHK
-	IniWrite, % JoinButtonDDLCheck, settings.ini, general, JoinButtonDDLCheck
-	IniWrite, % JoinButtonHKCheck, settings.ini, general, JoinButtonHKCheck
+	IniWrite, % SetButton, %inilocation%, general, SetButton
+	IniWrite, % JoinButtonDDL, %inilocation%, general, JoinButtonDDL
+	IniWrite, % JoinButtonHK, %inilocation%, general, JoinButtonHK
+	IniWrite, % JoinButtonDDLCheck, %inilocation%, general, JoinButtonDDLCheck
+	IniWrite, % JoinButtonHKCheck, %inilocation%, general, JoinButtonHKCheck
 
-	IniWrite, % joinX, settings.ini, general, joinX
-	IniWrite, % joinY, settings.ini, general, joinY
+	IniWrite, % joinX, %inilocation%, general, joinX
+	IniWrite, % joinY, %inilocation%, general, joinY
 
-	IniWrite, % StopIfFound, settings.ini, findtextstuff, StopIfFound
-	IniWrite, % ClipBoardMode, settings.ini, findtextstuff, ClipBoardMode
-	IniWrite, % InsertMode, settings.ini, findtextstuff, InsertMode
-	IniWrite, % ValidateKey, settings.ini, findtextstuff, ValidateKey
-	IniWrite, % ChatKey, settings.ini, findtextstuff, ChatKey
+	IniWrite, % StopIfFound, %inilocation%, findtextstuff, StopIfFound
+	IniWrite, % ClipBoardMode, %inilocation%, findtextstuff, ClipBoardMode
+	IniWrite, % InsertMode, %inilocation%, findtextstuff, InsertMode
+	IniWrite, % ValidateKey, %inilocation%, findtextstuff, ValidateKey
+	IniWrite, % ChatKey, %inilocation%, findtextstuff, ChatKey
 	Loop, 3
 	{
-		IniWrite, % FTScan%A_Index%, settings.ini, findtextstuff, FTScan%A_Index%
-		IniWrite, % FTRange%A_Index%, settings.ini, findtextstuff, FTRange%A_Index%
-		IniWrite, % FTError%A_Index%, settings.ini, findtextstuff, FTError%A_Index%
-		IniWrite, % FTCheck%A_Index%, settings.ini, findtextstuff, FTCheck%A_Index%
+		IniWrite, % FTScan%A_Index%, %inilocation%, findtextstuff, FTScan%A_Index%
+		IniWrite, % FTRange%A_Index%, %inilocation%, findtextstuff, FTRange%A_Index%
+		IniWrite, % FTError%A_Index%, %inilocation%, findtextstuff, FTError%A_Index%
+		IniWrite, % FTCheck%A_Index%, %inilocation%, findtextstuff, FTCheck%A_Index%
 	}
-	IniWrite, % CoordSetupRange, settings.ini, findtextstuff, CoordSetupRange
-	IniWrite, % CoordSetupError, settings.ini, findtextstuff, CoordSetupError
+	IniWrite, % CoordSetupRange, %inilocation%, findtextstuff, CoordSetupRange
+	IniWrite, % CoordSetupError, %inilocation%, findtextstuff, CoordSetupError
 	Loop, 12
 	{
-		IniWrite, % CoordSetupT%A_Index%, settings.ini, findtextstuff, CoordSetupT%A_Index%
+		IniWrite, % CoordSetupT%A_Index%, %inilocation%, findtextstuff, CoordSetupT%A_Index%
 	}
 	
-	IniWrite, % ControlKey, settings.ini, general, ControlKey
+	IniWrite, % ControlKey, %inilocation%, general, ControlKey
 
 	Loop, 8
 	{
-		IniWrite, % EIni%A_Index%, settings.ini, characters, EIni%A_Index%
-		IniWrite, % AIni%A_Index%, settings.ini, characters, AIni%A_Index%
-		IniWrite, % MainCheck%A_Index%, settings.ini, characters, MainCheck%A_Index%
-		IniWrite, % AutoSwitchIni%A_Index%, settings.ini, characters, AutoSwitchIni%A_Index%
+		IniWrite, % EIni%A_Index%, %inilocation%, characters, EIni%A_Index%
+		IniWrite, % AIni%A_Index%, %inilocation%, characters, AIni%A_Index%
+		IniWrite, % MainCheck%A_Index%, %inilocation%, characters, MainCheck%A_Index%
+		IniWrite, % AutoSwitchIni%A_Index%, %inilocation%, characters, AutoSwitchIni%A_Index%
 	}
 	return
 
+; load settings from ini file
 LoadSettings:
 	tmp := ""
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDL,
+	IniRead, tmp, %inilocation%, general, DofusEndOfTurnButtonDDL,
 	GuiControl,mainWindowG:Choose, DofusEndOfTurnButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHK,
+	IniRead, tmp, %inilocation%, general, DofusEndOfTurnButtonHK,
 	GuiControl,mainWindowG:, DofusEndOfTurnButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, DofusEndOfTurnButtonDDLCheck,0
 	GuiControl,mainWindowG:, DofusEndOfTurnButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, DofusEndOfTurnButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, DofusEndOfTurnButtonHKCheck,1
 	GuiControl,mainWindowG:, DofusEndOfTurnButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDL,
+	IniRead, tmp, %inilocation%, general, HeroesEndOfTurnButtonDDL,
 	GuiControl,mainWindowG:Choose, HeroesEndOfTurnButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHK,
+	IniRead, tmp, %inilocation%, general, HeroesEndOfTurnButtonHK,
 	GuiControl,mainWindowG:, HeroesEndOfTurnButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, HeroesEndOfTurnButtonDDLCheck,0
 	GuiControl,mainWindowG:, HeroesEndOfTurnButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, HeroesEndOfTurnButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, HeroesEndOfTurnButtonHKCheck,1
 	GuiControl,mainWindowG:, HeroesEndOfTurnButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, LeftClickButtonDDL,
+	IniRead, tmp, %inilocation%, general, LeftClickButtonDDL,
 	GuiControl,mainWindowG:Choose, LeftClickButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, LeftClickButtonHK,
+	IniRead, tmp, %inilocation%, general, LeftClickButtonHK,
 	GuiControl,mainWindowG:, LeftClickButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, LeftClickButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, LeftClickButtonDDLCheck,0
 	GuiControl,mainWindowG:, LeftClickButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, LeftClickButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, LeftClickButtonHKCheck,1
 	GuiControl,mainWindowG:, LeftClickButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, RightClickButtonDDL,
+	IniRead, tmp, %inilocation%, general, RightClickButtonDDL,
 	GuiControl,mainWindowG:Choose, RightClickButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, RightClickButtonHK,
+	IniRead, tmp, %inilocation%, general, RightClickButtonHK,
 	GuiControl,mainWindowG:, RightClickButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, RightClickButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, RightClickButtonDDLCheck,0
 	GuiControl,mainWindowG:, RightClickButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, RightClickButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, RightClickButtonHKCheck,1
 	GuiControl,mainWindowG:, RightClickButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, SwitchNextButtonDDL,
+	IniRead, tmp, %inilocation%, general, SwitchNextButtonDDL,
 	GuiControl,mainWindowG:Choose, SwitchNextButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchNextButtonHK,
+	IniRead, tmp, %inilocation%, general, SwitchNextButtonHK,
 	GuiControl,mainWindowG:, SwitchNextButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchNextButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, SwitchNextButtonDDLCheck,0
 	GuiControl,mainWindowG:, SwitchNextButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchNextButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, SwitchNextButtonHKCheck,1
 	GuiControl,mainWindowG:, SwitchNextButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, SwitchLastButtonDDL,
+	IniRead, tmp, %inilocation%, general, SwitchLastButtonDDL,
 	GuiControl,mainWindowG:Choose, SwitchLastButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchLastButtonHK,
+	IniRead, tmp, %inilocation%, general, SwitchLastButtonHK,
 	GuiControl,mainWindowG:, SwitchLastButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchLastButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, SwitchLastButtonDDLCheck,0
 	GuiControl,mainWindowG:, SwitchLastButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, SwitchLastButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, SwitchLastButtonHKCheck,1
 	GuiControl,mainWindowG:, SwitchLastButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, StartBattleButtonDDL,
+	IniRead, tmp, %inilocation%, general, StartBattleButtonDDL,
 	GuiControl,mainWindowG:Choose, StartBattleButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, StartBattleButtonHK,
+	IniRead, tmp, %inilocation%, general, StartBattleButtonHK,
 	GuiControl,mainWindowG:, StartBattleButtonHK, %tmp%
-	IniRead, tmp, settings.ini, general, StartBattleButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, StartBattleButtonDDLCheck,0
 	GuiControl,mainWindowG:, StartBattleButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, StartBattleButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, StartBattleButtonHKCheck,1
 	GuiControl,mainWindowG:, StartBattleButtonHKCheck, %tmp%
 
-	IniRead, tmp, settings.ini, general, SetButton,
+	IniRead, tmp, %inilocation%, general, SetButton,
 	GuiControl,mainWindowG:, SetButton, %tmp%
 
-	IniRead, tmp, settings.ini, general, joinButtonDDL,
+	IniRead, tmp, %inilocation%, general, joinButtonDDL,
 	GuiControl,mainWindowG:Choose, joinButtonDDL, %tmp%
-	IniRead, tmp, settings.ini, general, joinButtonHK,
+	IniRead, tmp, %inilocation%, general, joinButtonHK,
 	GuiControl,mainWindowG:, joinButtonHK, %tmp%
 
-	IniRead, tmp, settings.ini, general, joinButtonDDLCheck,0
+	IniRead, tmp, %inilocation%, general, joinButtonDDLCheck,0
 	GuiControl,mainWindowG:, joinButtonDDLCheck, %tmp%
-	IniRead, tmp, settings.ini, general, joinButtonHKCheck,1
+	IniRead, tmp, %inilocation%, general, joinButtonHKCheck,1
 	GuiControl,mainWindowG:, joinButtonHKCheck, %tmp%
 
-	IniRead, joinX, settings.ini, general, joinX,0
-	IniRead, joinY, settings.ini, general, joinY,0
+	IniRead, joinX, %inilocation%, general, joinX,0
+	IniRead, joinY, %inilocation%, general, joinY,0
 	GuiControl,mainWindowG:, Coords, Currently: %joinX%, %joinY%
 
-	IniRead, tmp, settings.ini, general, ControlKey,
+	IniRead, tmp, %inilocation%, general, ControlKey,
 	GuiControl,mainWindowG:Choose, ControlKey, %tmp%
 
-	IniRead, tmp, settings.ini, findtextstuff, StopIfFound,0
+	IniRead, tmp, %inilocation%, findtextstuff, StopIfFound,0
 	GuiControl,mainWindowG:, StopIfFound, %tmp%
 	Loop, 3
 	{
-		IniRead, tmp1, settings.ini, findtextstuff, FTScan%A_Index%,%A_Space%
-		IniRead, tmp2, settings.ini, findtextstuff, FTRange%A_Index%,%A_Space%
-		IniRead, tmp3, settings.ini, findtextstuff, FTError%A_Index%,%A_Space%
-		IniRead, tmp4, settings.ini, findtextstuff, FTCheck%A_Index%,0
+		IniRead, tmp1, %inilocation%, findtextstuff, FTScan%A_Index%,%A_Space%
+		IniRead, tmp2, %inilocation%, findtextstuff, FTRange%A_Index%,%A_Space%
+		IniRead, tmp3, %inilocation%, findtextstuff, FTError%A_Index%,%A_Space%
+		IniRead, tmp4, %inilocation%, findtextstuff, FTCheck%A_Index%,0
 		GuiControl,mainWindowG:,FTScan%A_Index%, %tmp1%
 		GuiControl,mainWindowG:,FTRange%A_Index%, %tmp2%
 		GuiControl,mainWindowG:,FTError%A_Index%, %tmp3%
 		GuiControl,mainWindowG:,FTCheck%A_Index%, %tmp4%
 	}
-	IniRead, tmp, settings.ini, findtextstuff, CoordSetupRange,%A_Space%
+	IniRead, tmp, %inilocation%, findtextstuff, CoordSetupRange,%A_Space%
 	GuiControl,mainWindowG:, CoordSetupRange, %tmp%
-	IniRead, tmp, settings.ini, findtextstuff, CoordSetupError,%A_Space%
+	IniRead, tmp, %inilocation%, findtextstuff, CoordSetupError,%A_Space%
 	GuiControl,mainWindowG:, CoordSetupError, %tmp%
 	Loop, 12
 	{
-		IniRead, tmp1, settings.ini, findtextstuff, CoordSetupT%A_Index%,%A_Space%
+		IniRead, tmp1, %inilocation%, findtextstuff, CoordSetupT%A_Index%,%A_Space%
 		GuiControl,mainWindowG:,CoordSetupT%A_Index%, %tmp1%
 	}
 
-	IniRead, tmp, settings.ini, findtextstuff, ClipBoardMode,1
+	IniRead, tmp, %inilocation%, findtextstuff, ClipBoardMode,1
 	GuiControl,mainWindowG:, ClipBoardMode, %tmp%
-	IniRead, tmp, settings.ini, findtextstuff, InsertMode,0
+	IniRead, tmp, %inilocation%, findtextstuff, InsertMode,0
 	GuiControl,mainWindowG:, InsertMode, %tmp%
-	IniRead, tmp, settings.ini, findtextstuff, ChatKey,
+	IniRead, tmp, %inilocation%, findtextstuff, ChatKey,
 	GuiControl,mainWindowG:, ChatKey, %tmp%
-	IniRead, tmp, settings.ini, findtextstuff, ValidateKey,Enter
+	IniRead, tmp, %inilocation%, findtextstuff, ValidateKey,Enter
 	GuiControl,mainWindowG:Choose, ValidateKey, %tmp%
 
 	Loop, 8
 	{	
-		IniRead, tmp1, settings.ini, characters, EIni%A_Index%,%A_Space%
-		IniRead, tmp2, settings.ini, characters, AIni%A_Index%,0
-		IniRead, tmp3, settings.ini, characters, AutoSwitchIni%A_Index%,0
-		IniRead, tmp4, settings.ini, characters, MainCheck%A_Index%,0
+		IniRead, tmp1, %inilocation%, characters, EIni%A_Index%,%A_Space%
+		IniRead, tmp2, %inilocation%, characters, AIni%A_Index%,0
+		IniRead, tmp3, %inilocation%, characters, AutoSwitchIni%A_Index%,0
+		IniRead, tmp4, %inilocation%, characters, MainCheck%A_Index%,0
 		GuiControl,mainWindowG:,EIni%A_Index%, %tmp1%
 		GuiControl,mainWindowG:,AIni%A_Index%, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni%A_Index%, %tmp3%
@@ -823,6 +847,7 @@ LoadSettings:
 	}
 	goto UpdateVars
 
+; tray icon command
 mainWindowGuiClose:
 	ExitFunc()
 	return
@@ -830,6 +855,7 @@ mainWindowGuiClose:
 ; Functions
 ; =============================
 ; =============================
+; catches minimize or close commands
 WM_SYSCOMMAND(wParam){
 	; window minimize button
 	If wParam = 0xF020
@@ -844,6 +870,7 @@ WM_SYSCOMMAND(wParam){
 	Return
 }
 
+; check if array contains a certain value
 HasVal(haystack, needle) {
     for index, value in haystack
         if (value = needle)
@@ -942,6 +969,7 @@ toCoords(coords, chatKey, validateKey, windowName){
 	}
 }
 
+; activates the ingame chat, pastes the command and presses validate
 insertChatCommand(windowName, command, chatKey, validateKey){
 	if(WinExist(windowName))
 	{
@@ -962,6 +990,7 @@ insertChatCommand(windowName, command, chatKey, validateKey){
 	}
 }
 
+; activates the ingame chat, pastes the command and presses validate (with less wait times in between)
 fastChatCommand(windowName, command, chatKey, validateKey){
 	if(WinExist(windowName))
 	{
@@ -981,31 +1010,25 @@ fastChatCommand(windowName, command, chatKey, validateKey){
 	}
 }
 
+; weak stop of current auto travel by running the sit command
 stopAutoTravel(windowName, chatKey, validateKey){
 	fastChatCommand(windowName, "sit", chatKey, validateKey)
 	return
 }
 
+; returns a random number between min, max
 rand(min, max){
 	random, rand, min, max
 	return rand
 }
 
+; shuts down the application and saves settings, if gui was loaded successfully beforehand
 ExitFunc(){
-	gosub SaveSettings
+	if(loadUpFinished)
+		gosub SaveSettings
 	ExitApp
 }
 
 ; Hotkeys
 ; =============================
 ; =============================
-
-F5::
-	gosub getCurrentCoords
-	perimeter := "|"
-	savedCoords = %savedCoords%%result%%perimeter%
-	Return
-;F6::
-;	Clipboard := savedCoords
-;	savedCoords := ""
-;	Return

@@ -29,29 +29,34 @@ Up:
 	Gui, mainWindowG:Submit, NoHide
 	if tmp = 1
 	{	
-		tmp1 = %EIni8%
-		tmp2 = %AIni8%
-		tmp3 = %AutoSwitchIni8%
+		tmp1 := EIni8
+		tmp2 := AIni8
+		tmp3 := AutoSwitchIni8
+		tmp4 := MainCheck8
 		GuiControl,mainWindowG:,EIni8, %EIni1%
 		GuiControl,mainWindowG:,EIni1, %tmp1%
 		GuiControl,mainWindowG:,AIni8, %AIni1%
 		GuiControl,mainWindowG:,AIni1, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni8, %AutoSwitchIni1%
 		GuiControl,mainWindowG:,AutoSwitchIni1, %tmp3%
+		GuiControl,mainWindowG:,MainCheck8, %MainCheck1%
+		GuiControl,mainWindowG:,MainCheck1, %tmp4%
 	}
 	else
 	{
-		tmptmp = %tmp%
-		tmptmp--
-		tmp1 = % EIni%tmptmp%
-		tmp2 = % AIni%tmptmp%
-		tmp3 = % AutoSwitchIni%tmptmp%
+		tmptmp := tmp - 1
+		tmp1 := EIni%tmptmp%
+		tmp2 := AIni%tmptmp%
+		tmp3 := AutoSwitchIni%tmptmp%
+		tmp4 := MainCheck%tmptmp%
 		GuiControl,mainWindowG:,EIni%tmptmp%, % EIni%tmp%
 		GuiControl,mainWindowG:,EIni%tmp%, %tmp1%
 		GuiControl,mainWindowG:,AIni%tmptmp%, % AIni%tmp%
 		GuiControl,mainWindowG:,AIni%tmp%, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
 		GuiControl,mainWindowG:,AutoSwitchIni%tmp%, %tmp3%
+		GuiControl,mainWindowG:,MainCheck%tmptmp%, % MainCheck%tmp%
+		GuiControl,mainWindowG:,MainCheck%tmp%, %tmp4%
 	}
 	Goto UpdateVars
 
@@ -83,29 +88,34 @@ Down:
 	Gui, mainWindowG:Submit, NoHide
 	if tmp = 8
 	{	
-		tmp1 = %EIni1%
-		tmp2 = %AIni1%
-		tmp3 = %AutoSwitchIni1%
+		tmp1 := EIni1
+		tmp2 := AIni1
+		tmp3 := AutoSwitchIni1
+		tmp4 := MainCheck1
 		GuiControl,mainWindowG:,EIni1, %EIni8%
 		GuiControl,mainWindowG:,EIni8, %tmp1%
 		GuiControl,mainWindowG:,AIni1, %AIni8%
 		GuiControl,mainWindowG:,Aini8, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni1, %AutoSwitchIni8%
 		GuiControl,mainWindowG:,AutoSwitchIni8, %tmp3%
+		GuiControl,mainWindowG:,MainCheck1, %MainCheck8%
+		GuiControl,mainWindowG:,MainCheck8, %tmp4%
 	}
 	else
 	{
-		tmptmp = %tmp%
-		tmptmp++
-		tmp1 = % EIni%tmptmp%
-		tmp2 = % AIni%tmptmp%
-		tmp3 = % AutoSwitchIni%tmptmp%
+		tmptmp := tmp + 1
+		tmp1 := EIni%tmptmp%
+		tmp2 := AIni%tmptmp%
+		tmp3 := AutoSwitchIni%tmptmp%
+		tmp4 := MainCheck%tmptmp%
 		GuiControl,mainWindowG:,EIni%tmptmp%, % EIni%tmp%
 		GuiControl,mainWindowG:,EIni%tmp%, %tmp1%
 		GuiControl,mainWindowG:,AIni%tmptmp%, % AIni%tmp%
 		GuiControl,mainWindowG:,AIni%tmp%, %tmp2%
 		GuiControl,mainWindowG:,AutoSwitchIni%tmptmp%, % AutoSwitchIni%tmp%
 		GuiControl,mainWindowG:,AutoSwitchIni%tmp%, %tmp3%
+		GuiControl,mainWindowG:,MainCheck%tmptmp%, % MainCheck%tmp%
+		GuiControl,mainWindowG:,MainCheck%tmp%, %tmp4%
 	}
 	Goto UpdateVars
 
@@ -149,19 +159,20 @@ showIni8:
 		WinActivate
 	return
 
-startBattle:
-	SetKeyDelay, 10, 10
-	anyWinActive = false
-	cc = 0
+checkAnyWin:
+	anyWinActive := False
 	Loop, %accounts%
 	{
 		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
+			anyWinActive := True
 	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
+	return
+
+startBattle:
+	SetKeyDelay, 50, 50
+	gosub checkAnyWin
+	if(anyWinActive)
+	{
 		Loop, %accounts%
 		{
 			if WinExist(ini%A_Index%)
@@ -177,30 +188,17 @@ startBattle:
 	return
 
 switchNext:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
+	gosub checkAnyWin
+	if(anyWinActive)
 	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
 		Loop, %accounts%
 		{
 			if WinActive(ini%A_Index%)
 			{
 				if A_Index = %accounts%
-				{
-					tmp = 1
-				}
+					tmp := 1
 				else
-				{
-					tmp = %A_Index%
-					tmp++
-				}
+					tmp := A_Index + 1
 				if WinExist(ini%tmp%)
 					WinActivate
 				return
@@ -211,36 +209,18 @@ switchNext:
 	return
 
 switchLast:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
+	gosub checkAnyWin
+	if(anyWinActive)
 	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
 		Loop, %accounts%
 		{
 			index := A_Index
-			if WinActive(ini%index%)
+			if WinActive(ini%A_Index%)
 			{
-
-				if index = 1
-				{
-					if WinExist(ini%accounts%)
-					{
-						WinActivate
-						return
-					}
-				}
+				if(A_Index = 1)
+					tmp := accounts
 				else
-				{
-					tmp = %index%
-					tmp--
-				}
+					tmp := A_Index - 1
 				if WinExist(ini%tmp%)
 					WinActivate
 				return
@@ -251,43 +231,36 @@ switchLast:
 	return
 
 HeroesEndOfTurn:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
+	gosub checkAnyWin
+	SetKeyDelay, 50, 50
+	if(anyWinActive)
 	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
 		Loop, %accounts%
 		{
 			if WinActive(ini%A_Index%)
 			{
 				if iniAutoSwitch%A_Index%
 				{
-					if DofusEndOfTurnButtonDDLCheck
+					if(DofusEndOfTurnButtonDDLCheck){
 						ControlSend,, {%DofusEndOfTurnButtonDDL%}
-					else
+					}
+					else{
 						ControlSend,, {%DofusEndOfTurnButtonHK%}
+					}
 					sleep 100
 					goto switchNext
 				}
 				else
 				{
-					if DofusEndOfTurnButtonDDLCheck
+					if(DofusEndOfTurnButtonDDLCheck){
 						ControlSend,, {%DofusEndOfTurnButtonDDL%}
-					else
+					}
+					else{
 						ControlSend,, {%DofusEndOfTurnButtonHK%}
+					}
 					sleep 100
 					return
 				}
-			}
-			else
-			{
-				sleep, % rand(25, 100)
 			}
 		}
 	}
@@ -295,40 +268,23 @@ HeroesEndOfTurn:
 
 ClientLeftClick:
 	MouseGetPos, xpos, ypos
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
+	gosub checkAnyWin
+	if(anyWinActive)
 	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
 		Loop, %accounts%
 		{
 			if WinExist(ini%A_Index%)
 				ControlClick, x%xpos% y%ypos%,,, L, 1
 			sleep, % rand(25, 75)
-
 		}
 	}
 	return
 
 ClientRightClick:
 	MouseGetPos, xpos, ypos
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
+	gosub checkAnyWin
+	if(anyWinActive)
 	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
 		Loop, %accounts%
 		{
 			if WinExist(ini%A_Index%)
@@ -349,17 +305,9 @@ SetJoinMsgCoords:
 	return
 
 FightJoin:
-	anyWinActive = false
-	cc = 0
-	Loop, %accounts%
+	gosub checkAnyWin
+	if(anyWinActive)
 	{
-		if WinActive(ini%A_Index%)
-			cc++
-		sleep 10
-	}
-	if cc = 1
-		anyWinActive = true
-	if anyWinActive{
 		Loop, %accounts%
 		{
 			if WinExist(ini%A_Index%) and not WinActive(ini%A_Index%)

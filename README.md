@@ -99,20 +99,26 @@ For me it looks like this:
 <a href="https://ibb.co/cggHRGM"><img src="https://i.ibb.co/w00X893/screen9.png" alt="screen9" border="0"></a>
 
 This is fine for me
+
 5.2) apply a color filter. This step is important, because shown colors are often very different and partly transparent etc. everything just messes with proper recogintion, if not properly preprocessed. The ones i useally use are Gray and GrayDiff. Simply press the Gray2Two button and the filter will be applied. It finds a certain value for the field on the left, which can be adjusted by you if the filter was not applied sucessfully. The value corresponds to how harsh the filter is applied (lower values = more harsh).
 
-<a href="https://ibb.co/St5y04F"><img src="https://i.ibb.co/5rG4vgb/screen10.png" alt="screen10" border="0"></a><br /><a target='_blank' href='https://de.imgbb.com/'>gif datei download kostenlos</a><br />
+<a href="https://ibb.co/St5y04F"><img src="https://i.ibb.co/5rG4vgb/screen10.png" alt="screen10" border="0"></a>
 
 Mine looks like this now. See the little errors on the bottom left side or around the eyes? I could make the filter more harsh so they vanish, or i could check the modify checkbox and correct the issue myself, by deleting the few pixels through clicking on them (or drawing those, that are necessary).
+
 If the result is not pleasing you, hit "Reset" to start from the raw image capture again.
 Hit "Close" to return to the former UI and make a new capture
 If you're fine what you captured and processed, continue
+
 5.3) Enter a tag in the comment section, which identifies what you're going to look for. For me it's simply "archmob". After that press "OK". Your inputs will now be taken to the main window. In the top you can now see the pattern you're going to look out for. Below is a small testing script so we can try if it actually works.
+
 5.4) Hit "GetRange". you can now pull a rectangle by left clicking with your mouse. Frame the area where you want to look for the given pattern, in my case it's my whole dofus window. When finished the script call below will update after FindText(-your new coordinates are now here-, ...)
+
 5.5) Hit "Test" to check if the pattern can currently be found. For me, it didn't (Found: 0), well that's because we're not completely finished yet!
+
 5.6) In the script below it says if(ok:=FindText( a, b, c, d (your coordinates from GetRange), 0, 0, Text) the both 0 here are error ranges (ranging from 0 to 1) you can apply, so it tries to match something that looks similar and not exactly like your pattern. If you're setting it too high you're most likely getting false results. I'll try 0.2
 
-<a href="https://ibb.co/fX1C7tM"><img src="https://i.ibb.co/D1V7nk4/screen11.png" alt="screen11" border="0"></a><br /><a target='_blank' href='https://de.imgbb.com/'>url link creator</a><br />
+<a href="https://ibb.co/fX1C7tM"><img src="https://i.ibb.co/D1V7nk4/screen11.png" alt="screen11" border="0"></a>
 
 This is how it looks for me now. Let's try testing it again!
 
@@ -124,4 +130,5 @@ Success :)
 6)
 
 7) Hit "Start or Stop TrackNTraveler" to open op the tracker. A New window will appear, which always remains on top of everything.
+
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/vLkXzLP/screen5.png" alt="screen5" border="0"></a>

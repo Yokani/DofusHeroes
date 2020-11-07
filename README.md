@@ -128,10 +128,34 @@ This is how it looks for me now. Let's try testing it again!
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/fYBBcHw/screen12.png" alt="screen12" border="0"></a>
 
 Success :)
+
 5.7) Now we just need to give Dofus Heroes the input we created. Copy the Text:="|... line and paste it in the text output field. Copy the first few parameters from your GetRange output (in my case 403, 13, 2161, 1411) and paste it in the GetRange output field. Then enter the allowed error you want to use and activate it.
 
-6)
+6) For the tracker to properly work you need to do the same thing with the map coordinates shown (if enabled in the game settings) at the top left corner.
 
-7) Hit "Start or Stop TrackNTraveler" to open op the tracker. A New window will appear, which always remains on top of everything.
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/Stty9QY/screen13.png" alt="screen13" border="0"></a>
+
+Capture each number ranging from 0 to 9, check if it is recognized, do the same with the - and , characters and paste your settings below your 3 user-defined patterns. IMPORTANT: Give the numbers, the - and , as comment the according number/character it represents, so for 0 it's 0 and so on. check my screenshot above of how my tab looks for reference. The comment is always saved at the start of the Text field between the carets.
+
+You can test the coordinate tracking with the "test it!" button. If it works it should give you the coordinates of the current map you're on.
+Mind that i'm using the feature where adjacent maps aren't shown and it's instead blacked out. This makes my coordinate recognition very reliable. It might not be the same for you if there is a ever changing background behind them!
+
+7) Finally... hit "Start or Stop TrackNTraveler" to open op the tracker. A New window will appear, which always remains on top of everything.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/vLkXzLP/screen5.png" alt="screen5" border="0"></a>
+
+It will now start tracking your screen (if you have windows above the dofus window it won't work correctly). If it finds what you're looking for it saves your current coordinates in the tracker window. Hit "clear history" to empty the contents.
+
+Auto Traveling feature:
+
+The TrackNTraveler window also contains the travel feature. Select either ClipboardMode (fine with TOS) or InsertMode (! violates the golden rule !) in the main GUI for it to work.
+
+For InsertMode or the "Stop if spotting something" feature you need to enter you chat-activation key and interface validation (almost always Enter) key from the game.
+
+Choose a route from the drop down list and hit "Start chosen route". 
+If clipboard mode is enabled the script will copy the /travel chat command for your next destination to your clipboard. In the game simply press CTRL-V to enter the command in your chat window and off go you! When you reach your destination the program will automatically copy the next destination to your clipboard.
+If insert mode is enabled the script will paste the chat command on its own, by activating the window, pressing CTRL-V for you and hitting your validation key to start running. It will do so again after you reach the destination until the route is finished.
+
+In a future release I'll add a feature for user-defined routes. For now you're stuck with what i came up with. Included are mostly all main island areas where archmonster can be found. If a route is selected the script will randomly determine the next subarea (e.g. astrub meadows if astrub was chosen) until every defined subarea is run once. You can skip the selected route by hitting "Skip current Route!". Hit it again to force it to skip (this requires you to stop your travel manually by clicking somewhere beforehand, if you're using insert mode!)
+
+If you want to pause your travel hit "Break travel". Hit the button again to continue your travel.

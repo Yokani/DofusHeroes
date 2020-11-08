@@ -358,6 +358,7 @@ UpdateVars:
 		if AIni%A_Index%
 		{
 			ini%c% := EIni%A_Index%
+			ini%c% .= " - Dofus"
 			iniAutoSwitch%c% := AutoSwitchIni%A_Index%
 			c++
 		}

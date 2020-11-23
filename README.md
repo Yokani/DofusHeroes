@@ -64,11 +64,11 @@ For the hotkey input field: Click into the field and press the hotkey you want t
 **If you want to do some advanced stuff, continue reading!**
 
 
-Third Tab (Infos and advanced stuff)
+Third Tab (FightJoiner feature)
 
 <a href="https://ibb.co/nj47WP3"><img src="https://i.ibb.co/M7KcXB8/screen3.png" alt="screen3" border="0"></a>
 
-FightJoiner:
+FightJoiner: (! violates the golden rule !)
 
 With this feature you can enter a fight and make your other characters join without needing to switch to their windows. Follow the instructions in the GUI to set it up correctly.
 

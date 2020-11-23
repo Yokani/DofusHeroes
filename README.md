@@ -40,13 +40,13 @@ First Tab (Characters):
 
 opt) Use the arrows on the left to change the initiative order live, for example if one of your characters had low hp
 
-In the example above we have Osaschmodas going first. He uses pets, hence we don't want to switch to the next character automatically after he ends his turn (autoSwitch is off). Jonny-Doe is our Iop. He doesn't use pets so we use the auto-switch feature to switch to our osa after his turn.
+In the example above we have Osaschmodas going first. He uses pets, hence we don't want to switch to the next character automatically after he ends his turn (autoSwitch is off). Jonny-Doe is our Iop. He doesn't use pets so we use the auto-switch feature to switch to our osa after his turn. We could also leave autoSwitch? on for Osaschmodas and end his turn normally. After the last pets turn we hit our Heroes-End-Of-Turn button to switch to the next character in order.
 
 Second Tab (Hotkey customization):
 
 <a href="https://ibb.co/K2D7yZC"><img src="https://i.ibb.co/1rMK2VH/screen2.png" alt="screen2" border="0"></a>
 
-On this tab you can set up your custom hotkeys. There mostly are a Drop-Down-List(DDL) and a Hotkey input field for each feature. The DDL is for mouse and other fixed keys that can't be used with the hotkey input field. Check the radio button on the left which of the two you want to use. Customize the hotkey on the right.
+On this tab you can set up your custom hotkeys. There mostly are a Drop-Down-List(DDL) and a Hotkey(HK) input field for each feature. The DDL is for mouse and other fixed keys that can't be used with the hotkey input field. Check the radio button on the left which of the two you want to use. Customize the hotkey on the right.
 For the hotkey input field: Click into the field and press the hotkey you want to use.
 
 1. Hotkey: Dofus-End-Of-Turn hotkey (DEOT): This is the hotkey in your game! Check your game options and enter the correct key here, or else many other features will not work correctly!
@@ -57,6 +57,11 @@ For the hotkey input field: Click into the field and press the hotkey you want t
 6. Hotkey: Switch-Forward: This key switches from the current character window to the next one depending on initiative ordering.
 7. Hotkey: Switch-Backward: This key switches from the current character window to the last one depending on initiative ordering.
 8. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
+
+
+For the basic setup you're done now!
+If you want to do some advanced stuff, continue reading!
+
 
 Third Tab (Infos and advanced stuff)
 

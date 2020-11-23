@@ -59,8 +59,9 @@ For the hotkey input field: Click into the field and press the hotkey you want t
 8. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
 
 
-For the basic setup you're done now!
-If you want to do some advanced stuff, continue reading!
+**For the basic setup you're done now!**
+
+**If you want to do some advanced stuff, continue reading!**
 
 
 Third Tab (Infos and advanced stuff)

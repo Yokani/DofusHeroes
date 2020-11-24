@@ -23,6 +23,8 @@ Current version: v1.2.1 https://github.com/Yokani/DofusHeroes/releases/tag/v1.2.
 
 # HowTo:
 
+The following picture are a bit outdated regarding visuals, but they still give hints on how to use the tool correctly, hence i will leave them like that for now.
+
 General Information:
 
 The settings are saved on correct termination (e.g. by pressing the "X" in the window). If you kill it, it won't save!

@@ -44,6 +44,7 @@ loadTrackGUI:
 	Guixpos := A_ScreenWidth - GuiWidth - 5
 	Gui, tracker:Color, a6a6a6, ffffff, 0
 	Gui, tracker:Show, y0 x%Guixpos% h250 w%GuiWidth%, DH Tracker & Traveler
+	WinSet, Transparent, 200, DH Tracker & Traveler
 	return
 
 clearTracker:

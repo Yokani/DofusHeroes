@@ -14,7 +14,10 @@ DButtonT:
 	return
 
 loadGUI:
-	Gui, mainWindowG:Show, Center AutoSize, %mainWindowTitle%
+	Gui, +LastFound
+	
+	Gui, mainWindowG:Show
+	WinSet, Transparent, 230, %mainWindowTitle%
 	return
 
 initGUI:
@@ -221,7 +224,9 @@ initGUI:
 	Gui, mainWindowG:Add, Text, x475 y+5, validate
 	Gui, mainWindowG:Add, DropDownList, vValidateKey gQuickUpdateVars x550 yp w100, Enter
 
-	Gui, mainWindowG:Color, a6a6a6, ffffff, 0
+	Gui, mainWindowG:Color, 73b528, dfff80
+	Gui, mainWindowG:Show, Center AutoSize Hide, %mainWindowTitle%
+	
 	return
 
 startFindTextGUI:

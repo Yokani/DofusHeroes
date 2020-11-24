@@ -25,7 +25,7 @@ OnExit("ExitFunc")
 ; 0: all
 ; 1: only basic
 ; 2: only basic && no golden rule violation
-inclusionMode := 0
+inclusionMode := 2
 
 #Include, DH_VARS.ahk
 #Include, DH_GUI.ahk

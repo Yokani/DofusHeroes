@@ -1,25 +1,25 @@
 # DofusHeroes
 A "small" AHK script for multi account optimization with a GUI, customizable hotkeys and more!
-The .exe file can be run on systems that don't have AutoHotkey installed. You can also download/pull the script, take a look at it, change it up and "compile" it on your own!
+The .exe file can be run on systems that don't have AutoHotkey installed. 
+You can also download/pull the script, take a look at it, change it up and "compile" it on your own!
 Autohotkey by default only works on Windows. If you want to make it work on UNIX systems use a wine port like AutoHotkeyX!
 
-This tool uses AutoHotkey to make handling multiple accounts (multiboxing) in the game Dofus easier by sending keyboard/mouse commands to hidden/multiple Dofus windows at once. Be mindful though: Regarding TOS the tool is not 100% allowed, but it is not 100% forbidden as well. Every action sequence is started by the user via. customizable Hotkeys, hence it is no Bot. It simply exists to simplify window management of different dofus client windows.
+This tool uses AutoHotkey to make handling multiple accounts (multiboxing) in the game Dofus easier by improving window management and forking keyboard/mouse commands to multiple client windows. Be mindful though: Regarding TOS the latter features (forking commands) is not 100% allowed, but it is not 100% forbidden as well. The statements in the Dofus TOS are not 100% clear on this topic. I can assure you however, that every action sequence is started by the user via. customizable Hotkeys, hence it is no Bot / automation software.
 
 Additional info regarding TOS and so on...:
 I marked features that are very grey-zonish as **(! violates the golden rule !)** in this readme. Everything that **isn't** marked as such is entirely fine to use according to mod statements on the forum and in general (other games as well).
+Why? Well it's because of the golden rule: 1 keypress = 1 action in game. This is the case for almost all features of my script and if possible I try to find ways to keep it that way.
 
-Why? Well it's because of the golden rule: 1 keypress = 1 action in game. This is the case for almost all features of my script and if possible I try to find ways to keep it that way. 
+Also I added multiple release options, in case you want to dispense the grey-zonish features.
 
 I will not take responsibility for anyone who uses this tool and gets banned for it (in particular if using the grey-zone features). Use at your own risk!
 
 Mind that some Anti-Virus software might think that the .exe (binary) is harmful. A scan of the binary can be found here: 
-https://www.virustotal.com/gui/file/8cd6fd0ebaad373497c60c3fa0ed32e4d4754192d29bc389af4e01ac8566d7b9/detection
-Zillya, MaxSecure & Cylance are "false-positives". You can google that... it's a common problem they have with AHK binaries. If you're still unsure take a look at the code yourself.
+https://www.virustotal.com/gui/file/1f32430bb923482ab3b4955d620e67d0894e4463b4128072cbe1c21a1bd32ecf/detection
+Some scanners listed here give "false-positives". You can google that... it's a common problem they have with AHK binaries. If you're still unsure take a look at the code yourself.
 
-# Release
-Current version: v1.2 https://github.com/Yokani/DofusHeroes/releases/
-
-Download directly here: https://github.com/Yokani/DofusHeroes/releases/download/v1.2/dofusheroes.rar
+# Release, Download Section
+Current version: v1.2.1 https://github.com/Yokani/DofusHeroes/releases/tag/v1.2.1
 
 # HowTo:
 

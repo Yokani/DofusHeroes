@@ -36,9 +36,9 @@ First Tab (Characters):
 <a href="https://ibb.co/30BL2n2"><img src="https://i.ibb.co/Ytpqmxm/screen1.png" alt="screen1" border="0"></a>
 
 1) On the first tab enter the names of your characters according to the initiave order of your team
-2) Check isActive? for every character that is logged in
-3) Check autoSwitchOn? for every character you wish to switch client windows after his/her turn.
-4) Check main? for your main character, who is using the TrackNTraveler feature
+2) Check Active? for every character that is logged in
+3) Check AutoSwitch? for every character you wish to switch client windows after his/her turn.
+4) Check Main? for your main character, who is using the TrackNTraveler feature
 
 opt) Use the arrows on the left to change the initiative order live, for example if one of your characters had low hp
 

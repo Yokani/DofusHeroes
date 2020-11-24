@@ -23,7 +23,7 @@ Current version: v1.2.1 https://github.com/Yokani/DofusHeroes/releases/tag/v1.2.
 
 # HowTo:
 
-The following picture are a bit outdated regarding visuals, but they still give hints on how to use the tool correctly, hence i will leave them like that for now.
+The following screenshots are a bit outdated regarding visuals, but they still give hints on how to use the tool correctly, hence i will leave them like that for now.
 
 General Information:
 

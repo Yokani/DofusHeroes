@@ -37,10 +37,9 @@ First Tab (Characters):
 
 1) On the first tab enter the names of your characters according to the initiave order of your team
 2) Check Active? for every character that is logged in
-3) Check AutoSwitch? for every character you wish to switch client windows after his/her turn.
-4) Check Main? for your main character, who is using the TrackNTraveler feature
-
-opt) Use the arrows on the left to change the initiative order live, for example if one of your characters had low hp
+3) Check AutoSwitch? for every character you wish to switch client windows after his/her turn. (OPTIONAL)
+4) Check Main? for your main character, who is using the TrackNTraveler feature (OPTIONAL)
+5) Use the arrows on the left to change the initiative order live, for example if one of your characters had low hp (OPTIONAL)
 
 In the example above we have Osaschmodas going first. He uses pets, hence we don't want to switch to the next character automatically after he ends his turn (autoSwitch is off). Jonny-Doe is our Iop. He doesn't use pets so we use the auto-switch feature to switch to our osa after his turn. We could also leave autoSwitch? on for Osaschmodas and end his turn normally. After the last pets turn we hit our Heroes-End-Of-Turn button to switch to the next character in order.
 

@@ -53,10 +53,9 @@ For the hotkey input field: Click into the field and press the hotkey you want t
 2. Hotkey: Heroes-End-Of-Turn hotkey: If you press this key, your DEOT key is sent to the currently active dofus window and if autoSwitchOn? is enabled for the current character the window of the next character in the initiative order is activated.
 3. Hotkey: Battle Starter: This key sends your DEOT key to all "isActive?" characters in order to ready them for the fight! (! violates the golden rule !)
 4. Hotkey: Left-Click: This key performs a Left-Click in all "isActive?" characters at the current mouse position. (! violates the golden rule !)
-5. Hotkey: Right-Click: This key performs a Right-Click in all "isActive?" characters at the current mouse position. (! violates the golden rule and won't work as expected)
-6. Hotkey: Switch-Forward: This key switches from the current character window to the next one depending on initiative ordering.
-7. Hotkey: Switch-Backward: This key switches from the current character window to the last one depending on initiative ordering.
-8. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
+5. Hotkey: Switch-Forward: This key switches from the current character window to the next one depending on initiative ordering.
+6. Hotkey: Switch-Backward: This key switches from the current character window to the last one depending on initiative ordering.
+7. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
 
 
 **For the basic setup you're done now!**

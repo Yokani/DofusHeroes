@@ -3,10 +3,11 @@ A "small" AHK script for multi account optimization with a GUI, customizable hot
 The .exe file can be run on systems that don't have AutoHotkey installed. You can also download/pull the script, take a look at it, change it up and "compile" it on your own!
 Autohotkey by default only works on Windows. If you want to make it work on UNIX systems use a wine port like AutoHotkeyX!
 
-This tool uses AutoHotkey to make handling multiple accounts (multiboxing) in the game Dofus easier by sending keyboard/mouse commands to multiple Dofus windows at once. Regarding TOS the tool is not 100% allowed, but it is not 100% forbidden as well. Every action sequence is started by the user via. customizable Hotkeys, hence it is no Bot. It simply exists to simplify window management of different dofus client windows.
+This tool uses AutoHotkey to make handling multiple accounts (multiboxing) in the game Dofus easier by sending keyboard/mouse commands to hidden/multiple Dofus windows at once. Be mindful though: Regarding TOS the tool is not 100% allowed, but it is not 100% forbidden as well. Every action sequence is started by the user via. customizable Hotkeys, hence it is no Bot. It simply exists to simplify window management of different dofus client windows.
 
 Additional info regarding TOS and so on...:
-I marked features that are very grey-zonish as (! violates the golden rule !) in this readme. Everything that isn't marked as such is entirely fine to use according to mod statements on the forum and in general (other games as well).
+I marked features that are very grey-zonish as **(! violates the golden rule !)** in this readme. Everything that **isn't** marked as such is entirely fine to use according to mod statements on the forum and in general (other games as well).
+
 Why? Well it's because of the golden rule: 1 keypress = 1 action in game. This is the case for almost all features of my script and if possible I try to find ways to keep it that way. 
 
 I will not take responsibility for anyone who uses this tool and gets banned for it (in particular if using the grey-zone features). Use at your own risk!
@@ -39,34 +40,40 @@ First Tab (Characters):
 
 opt) Use the arrows on the left to change the initiative order live, for example if one of your characters had low hp
 
-In the example above we have Osaschmodas going first. He uses pets, hence we don't want to switch to the next character automatically after he ends his turn (autoSwitch is off). Jonny-Doe is our Iop. He doesn't use pets so we use the auto-switch feature to switch to our osa after his turn.
+In the example above we have Osaschmodas going first. He uses pets, hence we don't want to switch to the next character automatically after he ends his turn (autoSwitch is off). Jonny-Doe is our Iop. He doesn't use pets so we use the auto-switch feature to switch to our osa after his turn. We could also leave autoSwitch? on for Osaschmodas and end his turn normally. After the last pets turn we hit our Heroes-End-Of-Turn button to switch to the next character in order.
 
 Second Tab (Hotkey customization):
 
 <a href="https://ibb.co/K2D7yZC"><img src="https://i.ibb.co/1rMK2VH/screen2.png" alt="screen2" border="0"></a>
 
-On this tab you can set up your custom hotkeys. There mostly are a Drop-Down-List(DDL) and a Hotkey input field for each feature. The DDL is for mouse and other fixed keys that can't be used with the hotkey input field. Check the radio button on the left which of the two you want to use. Customize the hotkey on the right.
+On this tab you can set up your custom hotkeys. There mostly are a Drop-Down-List(DDL) and a Hotkey(HK) input field for each feature. The DDL is for mouse and other fixed keys that can't be used with the hotkey input field. Check the radio button on the left which of the two you want to use. Customize the hotkey on the right.
 For the hotkey input field: Click into the field and press the hotkey you want to use.
 
 1. Hotkey: Dofus-End-Of-Turn hotkey (DEOT): This is the hotkey in your game! Check your game options and enter the correct key here, or else many other features will not work correctly!
 2. Hotkey: Heroes-End-Of-Turn hotkey: If you press this key, your DEOT key is sent to the currently active dofus window and if autoSwitchOn? is enabled for the current character the window of the next character in the initiative order is activated.
-3. Hotkey: Battle Starter: This key sends your DEOT key to all "isActive?" characters in order to ready them for the fight! (! violates the golden rule !)
-4. Hotkey: Left-Click: This key performs a Left-Click in all "isActive?" characters at the current mouse position. (! violates the golden rule !)
-5. Hotkey: Right-Click: This key performs a Right-Click in all "isActive?" characters at the current mouse position. (! violates the golden rule and won't work as expected)
-6. Hotkey: Switch-Forward: This key switches from the current character window to the next one depending on initiative ordering.
-7. Hotkey: Switch-Backward: This key switches from the current character window to the last one depending on initiative ordering.
-8. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
+3. Hotkey: Battle Starter: This key sends your DEOT key to all "isActive?" characters in order to ready them for the fight! **(! violates the golden rule !)**
+4. Hotkey: Left-Click: This key performs a Left-Click in all "isActive?" characters at the current mouse position. **(! violates the golden rule !)**
+5. Hotkey: Switch-Forward: This key switches from the current character window to the next one depending on initiative ordering.
+6. Hotkey: Switch-Backward: This key switches from the current character window to the last one depending on initiative ordering.
+7. Hotkey: Activate-X: This control key and a number activates the character window with the same number in the initiative ordering, e.g. Key + 2 activates the second characters window.
 
-Third Tab (Infos and advanced stuff)
+
+**For the basic setup you're done now!**
+
+**If you want to do some advanced stuff, continue reading!**
+
+
+Third Tab (FightJoiner feature)
 
 <a href="https://ibb.co/nj47WP3"><img src="https://i.ibb.co/M7KcXB8/screen3.png" alt="screen3" border="0"></a>
 
-FightJoiner:
+FightJoiner: **(! violates the golden rule !)**
 
 With this feature you can enter a fight and make your other characters join without needing to switch to their windows. Follow the instructions in the GUI to set it up correctly.
 
 # TrackNTraveler:
 
+InsertMode **(! violates the golden rule !)**, but ClipboardMode does not!
 For the auto-traveling features you need to have a pre-sentient mount! (feed it a pre-sentient potion from the shop/market)
 
 This feature requires some advanced setup, which i'll try to explain properly via the following guide.
@@ -152,7 +159,7 @@ It will now start tracking your screen (if you have windows above the dofus wind
 
 Auto Traveling feature:
 
-The TrackNTraveler window also contains the travel feature. Select either ClipboardMode (fine with TOS) or InsertMode (! violates the golden rule !) in the main GUI for it to work.
+The TrackNTraveler window also contains the travel feature. Select either ClipboardMode or InsertMode **(! violates the golden rule !)** in the main GUI for it to work.
 
 For InsertMode or the "Stop if spotting something" feature you need to enter you chat-activation key and interface validation (almost always Enter) key from the game.
 
